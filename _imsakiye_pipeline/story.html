@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: "Inter"; font-weight: 100 900; src: url("node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2") format("woff2"); unicode-range: U+0100-024F; }
+@font-face { font-family: "Inter"; font-weight: 100 900; src: url("node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-weight: 600; src: url("node_modules/@fontsource/fraunces/files/fraunces-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-024F; }
+@font-face { font-family: "Fraunces"; font-weight: 600; src: url("node_modules/@fontsource/fraunces/files/fraunces-latin-600-normal.woff2") format("woff2"); }
+
+:root {
+  --bg-1: #0d2f37;
+  --bg-2: #123f49;
+  --teal: #4fc3bd;
+  --teal-soft: rgba(79,195,189,.14);
+  --cream: #f4f1e6;
+  --muted: rgba(244,241,230,.62);
+  --line: rgba(244,241,230,.09);
+  --gold: #e7c27c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; }
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--cream);
+  background:
+    radial-gradient(1200px 900px at 50% -10%, #1d5a63 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.pattern { position: absolute; inset: 0; opacity: .07; }
+.wrap { position: absolute; left: 60px; right: 60px; top: 230px; bottom: 270px; display: flex; flex-direction: column; }
+
+.brand { display: flex; align-items: center; gap: 22px; }
+.brand img { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+.brand .name { font-family: "Fraunces", serif; font-size: 44px; font-weight: 600; letter-spacing: .5px; }
+.brand .handle { font-size: 26px; color: var(--muted); margin-top: 2px; }
+
+.date { margin-top: 48px; }
+.date .greg { font-family: "Fraunces", serif; font-weight: 600; font-size: 78px; line-height: 1.05; }
+.date .day { color: var(--teal); }
+.date .hijri { margin-top: 18px; font-size: 30px; color: var(--gold); letter-spacing: 1px; display: flex; align-items: center; gap: 14px; }
+.date .hijri svg { width: 30px; height: 30px; }
+
+.title { margin-top: 44px; font-size: 26px; font-weight: 700; letter-spacing: 6px; color: var(--muted); }
+
+.card {
+  margin-top: 22px;
+  background: rgba(8,30,36,.55);
+  border: 1px solid var(--line);
+  border-radius: 36px;
+  padding: 14px 30px 6px;
+  backdrop-filter: blur(4px);
+}
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th { font-size: 24px; font-weight: 600; color: var(--muted); text-align: center; padding: 18px 0 16px; letter-spacing: .5px; }
+th:first-child, td:first-child { text-align: left; }
+td { font-size: 35px; font-weight: 500; text-align: center; padding: 19px 0; border-top: 1px solid var(--line); }
+td:first-child { font-size: 31px; font-weight: 600; width: 190px; }
+.hl { color: var(--teal); font-weight: 700; }
+th.hl { color: var(--teal); }
+
+.cta {
+  margin-top: 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--teal); color: #0b2a31;
+  border-radius: 999px; padding: 26px 40px;
+}
+.cta .t1 { font-size: 30px; font-weight: 800; }
+.cta .t2 { font-size: 24px; font-weight: 500; opacity: .8; margin-top: 4px; }
+.cta .arrow { width: 64px; height: 64px; border-radius: 50%; background: #0b2a31; display: grid; place-items: center; }
+.note { margin-top: 18px; text-align: center; font-size: 22px; color: var(--muted); }
+</style>
+</head>
+<body>
+<svg class="pattern" width="1080" height="1920" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="p" width="180" height="180" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#f4f1e6" stroke-width="2">
+        <rect x="45" y="45" width="90" height="90"/>
+        <rect x="45" y="45" width="90" height="90" transform="rotate(45 90 90)"/>
+        <circle cx="90" cy="90" r="22"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#p)"/>
+</svg>
+
+<div class="wrap">
+  <div class="brand">
+    <img src="icon.png" alt="">
+    <div>
+      <div class="name">İmsakiye</div>
+      <div class="handle">@imsakiye.social</div>
+    </div>
+  </div>
+
+  <div class="date">
+    <div class="greg" id="greg"></div>
+    <div class="hijri">
+      <svg viewBox="0 0 24 24" fill="#e7c27c"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 15.9A8 8 0 1 1 14.5 2.5z"/></svg>
+      <span id="hijri"></span>
+    </div>
+  </div>
+
+  <div class="title">BUGÜNÜN NAMAZ VAKİTLERİ</div>
+  <div class="card">
+    <table>
+      <thead><tr><th></th><th class="hl">İmsak</th><th>Güneş</th><th>Öğle</th><th>İkindi</th><th>Akşam</th><th>Yatsı</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="cta">
+    <div>
+      <div class="t1">Senin şehrin için İmsakiye'yi indir</div>
+      <div class="t2">81 il · 8.500+ yer · vakit bildirimleri</div>
+    </div>
+    <div class="arrow"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4fc3bd" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="note">Vakitler il merkezleri içindir.</div>
+</div>
+
+<script>
+const DATA = window.__DATA__;
+document.getElementById("greg").innerHTML = `${DATA.date}<br><span class="day">${DATA.weekday}</span>`;
+document.getElementById("hijri").textContent = DATA.hijri;
+document.getElementById("rows").innerHTML = DATA.cities.map(c =>
+  `<tr><td>${c.name}</td><td class="hl">${c.imsak}</td><td>${c.gunes}</td><td>${c.ogle}</td><td>${c.ikindi}</td><td>${c.aksam}</td><td>${c.yatsi}</td></tr>`
+).join("");
+</script>
+</body>
+</html>

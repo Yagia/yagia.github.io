@@ -1,0 +1,5 @@
+node_modules/
+frames/
+__pycache__/
+music.wav
+story.png

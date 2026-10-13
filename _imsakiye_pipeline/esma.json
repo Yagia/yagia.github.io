@@ -1,0 +1,497 @@
+[
+ {
+  "number": 1,
+  "arabic": "اللَّهُ",
+  "transliteration": "Allah"
+ },
+ {
+  "number": 2,
+  "arabic": "الرَّحْمَٰنُ",
+  "transliteration": "er-Rahmân"
+ },
+ {
+  "number": 3,
+  "arabic": "الرَّحِيمُ",
+  "transliteration": "er-Rahîm"
+ },
+ {
+  "number": 4,
+  "arabic": "الْمَلِكُ",
+  "transliteration": "el-Melik"
+ },
+ {
+  "number": 5,
+  "arabic": "الْقُدُّوسُ",
+  "transliteration": "el-Kuddûs"
+ },
+ {
+  "number": 6,
+  "arabic": "السَّلَامُ",
+  "transliteration": "es-Selâm"
+ },
+ {
+  "number": 7,
+  "arabic": "الْمُؤْمِنُ",
+  "transliteration": "el-Mü'min"
+ },
+ {
+  "number": 8,
+  "arabic": "الْمُهَيْمِنُ",
+  "transliteration": "el-Müheymin"
+ },
+ {
+  "number": 9,
+  "arabic": "الْعَزِيزُ",
+  "transliteration": "el-Azîz"
+ },
+ {
+  "number": 10,
+  "arabic": "الْجَبَّارُ",
+  "transliteration": "el-Cebbâr"
+ },
+ {
+  "number": 11,
+  "arabic": "الْمُتَكَبِّرُ",
+  "transliteration": "el-Mütekebbir"
+ },
+ {
+  "number": 12,
+  "arabic": "الْخَالِقُ",
+  "transliteration": "el-Hâlik"
+ },
+ {
+  "number": 13,
+  "arabic": "الْبَارِئُ",
+  "transliteration": "el-Bâri'"
+ },
+ {
+  "number": 14,
+  "arabic": "الْمُصَوِّرُ",
+  "transliteration": "el-Musavvir"
+ },
+ {
+  "number": 15,
+  "arabic": "الْغَفَّارُ",
+  "transliteration": "el-Gaffâr"
+ },
+ {
+  "number": 16,
+  "arabic": "الْقَهَّارُ",
+  "transliteration": "el-Kahhâr"
+ },
+ {
+  "number": 17,
+  "arabic": "الْوَهَّابُ",
+  "transliteration": "el-Vehhâb"
+ },
+ {
+  "number": 18,
+  "arabic": "الرَّزَّاقُ",
+  "transliteration": "er-Rezzâk"
+ },
+ {
+  "number": 19,
+  "arabic": "الْفَتَّاحُ",
+  "transliteration": "el-Fettâh"
+ },
+ {
+  "number": 20,
+  "arabic": "الْعَلِيمُ",
+  "transliteration": "el-Alîm"
+ },
+ {
+  "number": 21,
+  "arabic": "الْقَابِضُ",
+  "transliteration": "el-Kâbız"
+ },
+ {
+  "number": 22,
+  "arabic": "الْبَاسِطُ",
+  "transliteration": "el-Bâsıt"
+ },
+ {
+  "number": 23,
+  "arabic": "الْخَافِضُ",
+  "transliteration": "el-Hâfıd"
+ },
+ {
+  "number": 24,
+  "arabic": "الرَّافِعُ",
+  "transliteration": "er-Râfi'"
+ },
+ {
+  "number": 25,
+  "arabic": "الْمُعِزُّ",
+  "transliteration": "el-Muizz"
+ },
+ {
+  "number": 26,
+  "arabic": "الْمُذِلُّ",
+  "transliteration": "el-Müzill"
+ },
+ {
+  "number": 27,
+  "arabic": "السَّمِيعُ",
+  "transliteration": "es-Semî'"
+ },
+ {
+  "number": 28,
+  "arabic": "الْبَصِيرُ",
+  "transliteration": "el-Basîr"
+ },
+ {
+  "number": 29,
+  "arabic": "الْحَكَمُ",
+  "transliteration": "el-Hakem"
+ },
+ {
+  "number": 30,
+  "arabic": "الْعَدْلُ",
+  "transliteration": "el-Adl"
+ },
+ {
+  "number": 31,
+  "arabic": "اللَّطِيفُ",
+  "transliteration": "el-Latîf"
+ },
+ {
+  "number": 32,
+  "arabic": "الْخَبِيرُ",
+  "transliteration": "el-Habîr"
+ },
+ {
+  "number": 33,
+  "arabic": "الْحَلِيمُ",
+  "transliteration": "el-Halîm"
+ },
+ {
+  "number": 34,
+  "arabic": "الْعَظِيمُ",
+  "transliteration": "el-Azîm"
+ },
+ {
+  "number": 35,
+  "arabic": "الْغَفُورُ",
+  "transliteration": "el-Gafûr"
+ },
+ {
+  "number": 36,
+  "arabic": "الشَّكُورُ",
+  "transliteration": "eş-Şekûr"
+ },
+ {
+  "number": 37,
+  "arabic": "الْعَلِيُّ",
+  "transliteration": "el-Aliyy"
+ },
+ {
+  "number": 38,
+  "arabic": "الْكَبِيرُ",
+  "transliteration": "el-Kebîr"
+ },
+ {
+  "number": 39,
+  "arabic": "الْحَفِيظُ",
+  "transliteration": "el-Hafîz"
+ },
+ {
+  "number": 40,
+  "arabic": "الْمُقِيتُ",
+  "transliteration": "el-Mukît"
+ },
+ {
+  "number": 41,
+  "arabic": "الْحَسِيبُ",
+  "transliteration": "el-Hasîb"
+ },
+ {
+  "number": 42,
+  "arabic": "الْجَلِيلُ",
+  "transliteration": "el-Celîl"
+ },
+ {
+  "number": 43,
+  "arabic": "الْكَرِيمُ",
+  "transliteration": "el-Kerîm"
+ },
+ {
+  "number": 44,
+  "arabic": "الرَّقِيبُ",
+  "transliteration": "er-Rakîb"
+ },
+ {
+  "number": 45,
+  "arabic": "الْمُجِيبُ",
+  "transliteration": "el-Mücîb"
+ },
+ {
+  "number": 46,
+  "arabic": "الْوَاسِعُ",
+  "transliteration": "el-Vâsi'"
+ },
+ {
+  "number": 47,
+  "arabic": "الْحَكِيمُ",
+  "transliteration": "el-Hakîm"
+ },
+ {
+  "number": 48,
+  "arabic": "الْوَدُودُ",
+  "transliteration": "el-Vedûd"
+ },
+ {
+  "number": 49,
+  "arabic": "الْمَجِيدُ",
+  "transliteration": "el-Mecîd"
+ },
+ {
+  "number": 50,
+  "arabic": "الْبَاعِثُ",
+  "transliteration": "el-Bâis"
+ },
+ {
+  "number": 51,
+  "arabic": "الشَّهِيدُ",
+  "transliteration": "eş-Şehîd"
+ },
+ {
+  "number": 52,
+  "arabic": "الْحَقُّ",
+  "transliteration": "el-Hakk"
+ },
+ {
+  "number": 53,
+  "arabic": "الْوَكِيلُ",
+  "transliteration": "el-Vekîl"
+ },
+ {
+  "number": 54,
+  "arabic": "الْقَوِيُّ",
+  "transliteration": "el-Kavî"
+ },
+ {
+  "number": 55,
+  "arabic": "الْمَتِينُ",
+  "transliteration": "el-Metîn"
+ },
+ {
+  "number": 56,
+  "arabic": "الْوَلِيُّ",
+  "transliteration": "el-Velî"
+ },
+ {
+  "number": 57,
+  "arabic": "الْحَمِيدُ",
+  "transliteration": "el-Hamîd"
+ },
+ {
+  "number": 58,
+  "arabic": "الْمُحْصِي",
+  "transliteration": "el-Muhsî"
+ },
+ {
+  "number": 59,
+  "arabic": "الْمُبْدِئُ",
+  "transliteration": "el-Mübdi'"
+ },
+ {
+  "number": 60,
+  "arabic": "الْمُعِيدُ",
+  "transliteration": "el-Muîd"
+ },
+ {
+  "number": 61,
+  "arabic": "الْمُحْيِي",
+  "transliteration": "el-Muhyî"
+ },
+ {
+  "number": 62,
+  "arabic": "الْمُمِيتُ",
+  "transliteration": "el-Mümît"
+ },
+ {
+  "number": 63,
+  "arabic": "الْحَيُّ",
+  "transliteration": "el-Hayy"
+ },
+ {
+  "number": 64,
+  "arabic": "الْقَيُّومُ",
+  "transliteration": "el-Kayyûm"
+ },
+ {
+  "number": 65,
+  "arabic": "الْوَاجِدُ",
+  "transliteration": "el-Vâcid"
+ },
+ {
+  "number": 66,
+  "arabic": "الْمَاجِدُ",
+  "transliteration": "el-Mâcid"
+ },
+ {
+  "number": 67,
+  "arabic": "الْوَاحِدُ",
+  "transliteration": "el-Vâhid"
+ },
+ {
+  "number": 68,
+  "arabic": "الصَّمَدُ",
+  "transliteration": "es-Samed"
+ },
+ {
+  "number": 69,
+  "arabic": "الْقَادِرُ",
+  "transliteration": "el-Kâdir"
+ },
+ {
+  "number": 70,
+  "arabic": "الْمُقْتَدِرُ",
+  "transliteration": "el-Muktedir"
+ },
+ {
+  "number": 71,
+  "arabic": "الْمُقَدِّمُ",
+  "transliteration": "el-Mukaddim"
+ },
+ {
+  "number": 72,
+  "arabic": "الْمُؤَخِّرُ",
+  "transliteration": "el-Muahhir"
+ },
+ {
+  "number": 73,
+  "arabic": "الْأَوَّلُ",
+  "transliteration": "el-Evvel"
+ },
+ {
+  "number": 74,
+  "arabic": "الْآخِرُ",
+  "transliteration": "el-Âhir"
+ },
+ {
+  "number": 75,
+  "arabic": "الظَّاهِرُ",
+  "transliteration": "ez-Zâhir"
+ },
+ {
+  "number": 76,
+  "arabic": "الْبَاطِنُ",
+  "transliteration": "el-Bâtın"
+ },
+ {
+  "number": 77,
+  "arabic": "الْوَالِي",
+  "transliteration": "el-Vâlî"
+ },
+ {
+  "number": 78,
+  "arabic": "الْمُتَعَالِي",
+  "transliteration": "el-Müteâlî"
+ },
+ {
+  "number": 79,
+  "arabic": "الْبَرُّ",
+  "transliteration": "el-Berr"
+ },
+ {
+  "number": 80,
+  "arabic": "التَّوَّابُ",
+  "transliteration": "et-Tevvâb"
+ },
+ {
+  "number": 81,
+  "arabic": "الْمُنْتَقِمُ",
+  "transliteration": "el-Müntakım"
+ },
+ {
+  "number": 82,
+  "arabic": "الْعَفُوُّ",
+  "transliteration": "el-Afüvv"
+ },
+ {
+  "number": 83,
+  "arabic": "الرَّءُوفُ",
+  "transliteration": "er-Raûf"
+ },
+ {
+  "number": 84,
+  "arabic": "مَالِكُ الْمُلْكِ",
+  "transliteration": "Mâlikü'l-mülk"
+ },
+ {
+  "number": 85,
+  "arabic": "ذُو الْجَلَالِ وَالْإِكْرَامِ",
+  "transliteration": "Zü'l-celâli ve'l-ikrâm"
+ },
+ {
+  "number": 86,
+  "arabic": "الْمُقْسِطُ",
+  "transliteration": "el-Muksit"
+ },
+ {
+  "number": 87,
+  "arabic": "الْجَامِعُ",
+  "transliteration": "el-Câmi'"
+ },
+ {
+  "number": 88,
+  "arabic": "الْغَنِيُّ",
+  "transliteration": "el-Ganî"
+ },
+ {
+  "number": 89,
+  "arabic": "الْمُغْنِي",
+  "transliteration": "el-Muğnî"
+ },
+ {
+  "number": 90,
+  "arabic": "الْمَانِعُ",
+  "transliteration": "el-Mâni'"
+ },
+ {
+  "number": 91,
+  "arabic": "الضَّارُّ",
+  "transliteration": "ed-Dârr"
+ },
+ {
+  "number": 92,
+  "arabic": "النَّافِعُ",
+  "transliteration": "en-Nâfi'"
+ },
+ {
+  "number": 93,
+  "arabic": "النُّورُ",
+  "transliteration": "en-Nûr"
+ },
+ {
+  "number": 94,
+  "arabic": "الْهَادِي",
+  "transliteration": "el-Hâdî"
+ },
+ {
+  "number": 95,
+  "arabic": "الْبَدِيعُ",
+  "transliteration": "el-Bedî'"
+ },
+ {
+  "number": 96,
+  "arabic": "الْبَاقِي",
+  "transliteration": "el-Bâkî"
+ },
+ {
+  "number": 97,
+  "arabic": "الْوَارِثُ",
+  "transliteration": "el-Vâris"
+ },
+ {
+  "number": 98,
+  "arabic": "الرَّشِيدُ",
+  "transliteration": "er-Reşîd"
+ },
+ {
+  "number": 99,
+  "arabic": "الصَّبُورُ",
+  "transliteration": "es-Sabûr"
+ }
+]
