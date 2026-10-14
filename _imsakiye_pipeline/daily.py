@@ -332,6 +332,23 @@ def esma_story(day):
     return f"{BASE_URL}/story/esma-{day.isoformat()}.jpg"
 
 
+def esma_post(day):
+    """Same Esmâ card as the evening story, cropped to the 4:5 feed format."""
+    from PIL import Image
+    src = SITE / "story" / f"esma-{day.isoformat()}.jpg"
+    if not src.exists():
+        esma_story(day)
+    item = json.loads((HERE / "esma.json").read_text())[(day - ESMA_START).days % 99]
+    dst = SITE / "post" / f"esma-{day.isoformat()}.jpg"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    Image.open(src).convert("RGB").crop((0, 215, 1080, 1565)).save(dst, "JPEG", quality=92)
+    caption = (f"Esmâ-ül Hüsnâ · {item['number']}/99\n{item['transliteration']} ✨\n\n"
+               "Her gün Allah'ın güzel isimlerinden birini paylaşıyoruz. Kaydet, serinin tamamını kaçırma.\n\n"
+               "🤲 Yorumlara “Âmin” yaz.\n📩 Sevdiklerinle paylaş.\n\n" + FOLLOW + "\n\n"
+               "#esmaülhüsna #allahın99ismi #esma #dua #imsakiye")
+    return f"{BASE_URL}/post/esma-{day.isoformat()}.jpg", caption
+
+
 GREETINGS = {
     "regaib":  ("Regaib Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
     "mirac":   ("Miraç Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
@@ -397,6 +414,9 @@ def overrides(day):
                     "sub": f"{when.day} {MONTHS[when.month - 1]} {DAYS[when.weekday()]}"
                            + (" gecesi" if k in religious.NIGHTS else ""), "dua": dua_of(day, 3)}
             out["evening_story"] = special_card(day, "sayac", card, "story")
+            out["evening_post"] = (special_card(day, "sayac", card, "post"),
+                                   f"{card['title']} 🌙\n{card['sub']}\n\n“{card['dua']['tr']}”\n({card['dua']['source']})\n\n"
+                                   "🤲 Yorumlara “Âmin” yaz.\n📩 Sevdiklerine hatırlat.\n\n" + FOLLOW + "\n\n" + TAGS)
     return out
 
 
@@ -421,6 +441,10 @@ def main():
     add("morning_reel", "reel", ayet_reel)
     add("noon_post", "image", (lambda d: special["noon_post"]) if "noon_post" in special else hadis_post)
     add("evening_story", "story_image", (lambda d: special["evening_story"]) if "evening_story" in special else esma_story)
+    if "evening_post" in special:
+        add("evening_post", "image", lambda d: special["evening_post"])
+    elif "evening_story" not in special:                        # occasion days already have the noon card
+        add("evening_post", "image", esma_post)
     add("evening_reel", "reel", evening_reel)
     out = SITE / "daily" / f"{day.isoformat()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
