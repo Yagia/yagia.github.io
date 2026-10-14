@@ -2,7 +2,8 @@
 
 Renders into ../imsakiye/ (published by GitHub Pages):
   story/<YYYY-MM-DD>.jpg   today's prayer times for 8 cities (Diyanet, cross-checked)
-  reels/esma-<YYYY-MM-DD>.mp4   Esmâ-ül Hüsnâ series, one name per day
+  reels/ayet-, ayet2-, dua-<YYYY-MM-DD>.mp4   story reels: hook → verse/dua → note → CTA → app end card
+  story/esma-<YYYY-MM-DD>.jpg   Esmâ-ül Hüsnâ series, one name per day (evening story)
   daily/<YYYY-MM-DD>.json  manifest the Supabase publisher reads (captions, urls)
 
 Nothing is published here; Supabase posts the files at the scheduled times.
@@ -177,6 +178,160 @@ def dua_story(day):
     return f"{BASE_URL}/story/dua-{day.isoformat()}.jpg"
 
 
+
+# ---------------------------------------------------------------- story reels (hook → verse → note → CTA → app)
+import reels_content as RC
+
+REEL_EPOCH = dt.date(2026, 10, 15)
+APP_SHOTS = [("times", "Namaz vakitleri ve 30 günlük imsakiye"), ("quran", "Kur'an-ı Kerim: meal, tefsir ve dinleme"),
+             ("qibla", "Kıble pusulası ve yakındaki camiler"), ("tracker", "Namaz takibi ve akşam hatırlatması"),
+             ("hatim", "Hatim planı: her gün biraz")]
+CTA = {"amin": ("Yorumlara “Âmin” yaz.", "Duana ortak olalım.", "comment", "🤲 Yorumlara “Âmin” yaz."),
+       "share": ("İhtiyacı olan birine\ngönder.", "Bir paylaşım, bir hatırlatma.", "share", "📩 İhtiyacı olan birine gönder."),
+       "save": ("Kaydet,\ntekrar oku.", "Gün içinde dönüp bakmak için.", "save", "🔖 Kaydet, gün içinde tekrar oku."),
+       "salavat": ("Yorumlara bir\nsalavat bırak.", "Allâhümme salli alâ Muhammed.", "comment", "🤍 Yorumlara bir salavat bırak."),
+       "hamd": ("Yorumlara bir\n“Elhamdülillah” bırak.", "Bugün neye şükrettin?", "comment", "🤲 Yorumlara bir “Elhamdülillah” bırak.")}
+BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ "
+
+
+def tr_upper(s):
+    return s.replace("i", "İ").replace("ı", "I").upper()
+
+
+def ref_name(ref):
+    s, a = ref.split(":")
+    return SURAHS[int(s) - 1], a
+
+
+def quran_text(ref):
+    """Diyanet Vakfı translation + simple Arabic; the cached copy is only a fallback when the API is down."""
+    try:
+        tr = get(f"https://api.alquran.cloud/v1/ayah/{ref}/tr.vakfi")["data"]["text"]
+        ar = get(f"https://api.alquran.cloud/v1/ayah/{ref}/quran-simple")["data"]["text"]
+        return tr.strip(), ar.strip()
+    except Exception as e:
+        print(f"quran api: {e} – using cache for {ref}")
+        return tuple(json.loads((HERE / "quran_cache.json").read_text())[ref])
+
+
+def norm(s):
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def ayet_entry(day, which):
+    """which: 0 = morning, 1 = evening (odd days only). Fridays' morning reel comes from the Cuma set."""
+    n = (day - REEL_EPOCH).days
+    if which == 0 and day.weekday() == 4:
+        pool, start = RC.CUMA, (n // 7) % len(RC.CUMA)
+    else:
+        pool, start = RC.AYET, (n + n // 2 + which) % len(RC.AYET)
+    for k in range(len(pool)):                          # an entry whose excerpt no longer matches is skipped
+        e = pool[(start + k) % len(pool)]
+        tr, ar = quran_text(e["ref"])
+        if norm(e["ex"]) in norm(tr) and e["hl"] in e["ex"]:
+            return e, tr, ar
+        print(f"reel: excerpt mismatch for {e['ref']}, skipped")
+    raise SystemExit("no valid verse entry")
+
+
+def shoot_reel(data, frames, fps=30):
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        b = p.chromium.launch()
+        pg = b.new_page(viewport={"width": 1080, "height": 1920})
+        pg.add_init_script(f"window.__DATA__ = {json.dumps(data, ensure_ascii=False)};")
+        pg.goto((HERE / "reel.html").as_uri())
+        dur = float(pg.evaluate("window.READY"))
+        pg.wait_for_timeout(500)
+        for i in range(int(dur * fps)):
+            pg.evaluate(f"render({i / fps})")
+            pg.screenshot(path=str(frames / f"{i:05d}.jpg"), type="jpeg", quality=92)
+        b.close()
+    return dur
+
+
+def app_shot(day, which):
+    name, line = APP_SHOTS[((day - REEL_EPOCH).days * 2 + which) % len(APP_SHOTS)]
+    return {"img": f"app/{name}.jpg", "line": line}
+
+
+def render_reel(day, data, stem):
+    frames = frames_dir()
+    dur = shoot_reel(data, frames)
+    dst = SITE / "reels" / f"{stem}-{day.isoformat()}.mp4"
+    encode_reel(frames, 30, int(dur + 0.999), dst)
+    return f"{BASE_URL}/reels/{stem}-{day.isoformat()}.mp4"
+
+
+FOLLOW = ("Her gün bir ayet ve dua için @imsakiye.social'ı takip et.\n"
+          "📲 İmsakiye uygulaması App Store'da ücretsiz: namaz vakitleri, Kur'an, kıble ve dualar. Profildeki bağlantıdan indir.")
+
+
+def ayet_reel(day, which=0):
+    e, tr, ar = ayet_entry(day, which)
+    sura, a = ref_name(e["ref"])
+    ex = e["ex"]
+    shown = ("…" if ex[0].islower() else "") + ex + ("" if ex[-1] in ".!?”\"" else "…")
+    full = norm(ex) == norm(tr)
+    if ar.startswith(BISMILLAH) and not e["ref"].startswith("1:"):
+        ar = ar[len(BISMILLAH):]
+    ar = ar.replace("۞", "").strip()
+    big, small, icon, cap = CTA.get(e["cta"], (e["cta"], "", "comment", "💬 " + e["cta"].replace("\n", " ")))
+    data = {"kind": "ayet", "seed": day.toordinal() * 2 + which,
+            "kicker1": "BİR SORU" if e["hook"].rstrip().endswith("?") else "BİR HATIRLATMA",
+            "hook": e["hook"], "kicker2": f"{tr_upper(sura)} SÛRESİ · {a}. AYET",
+            "ar": ar if full and len(ar) <= 110 else "", "text": shown, "hl": e["hl"], "src": "Meal: Diyanet Vakfı",
+            "note": e["note"], "ctaBig": big, "ctaSmall": small, "ctaIcon": icon, "app": app_shot(day, which)}
+    url = render_reel(day, data, "ayet" if which == 0 else "ayet2")
+    extra = [l for k, l in (("share", CTA["share"][3]), ("save", CTA["save"][3])) if e["cta"] != k]
+    caption = (f"{e['hook'].replace(chr(10), ' ')}\n\n“{shown}”\n({sura} Sûresi, {a}. ayet · Meal: Diyanet Vakfı)\n\n"
+               f"{e['note'].replace(chr(10), ' ')}\n\n{cap}\n" + "\n".join(extra) + f"\n\n{FOLLOW}\n\n"
+               "#ayet #kuranıkerim #huzur #namazvakitleri #imsakiye")
+    return url, caption
+
+
+def dua_reel(day):
+    n = (day - REEL_EPOCH).days
+    e = RC.DUA[(n // 2) % len(RC.DUA)]
+    d = next(x for x in json.loads((HERE / "dua.json").read_text()) if x["id"] == e["id"])
+    s, a = re.search(r"\b(\d+):([\d-]+)", d["source"]).groups()
+    sura = SURAHS[int(s) - 1]
+    unit = "ayetler" if "-" in a else "ayet"
+    big, small, icon, cap = CTA["amin"]
+    data = {"kind": "dua", "seed": day.toordinal() * 2 + 1, "kicker1": e["who"], "hook": e["hook"],
+            "kicker2": f"{tr_upper(sura)} SÛRESİ · {a}. {tr_upper(unit)}", "ar": d["ar"].strip(), "text": d["tr"].strip(),
+            "hl": "", "src": "", "note": e["note"], "ctaBig": big, "ctaSmall": small, "ctaIcon": icon,
+            "app": app_shot(day, 1)}
+    url = render_reel(day, data, "dua")
+    caption = (f"{e['hook'].replace(chr(10), ' ')}\n\n{d['ar'].strip()}\n\n“{d['tr'].strip()}”\n({sura} Sûresi, {a}. {unit})\n\n"
+               f"{e['note'].replace(chr(10), ' ')}\n\n{cap}\n📩 Bu duayı sevdiklerine gönder.\n🔖 Kaydet, tekrar oku.\n\n{FOLLOW}\n\n"
+               "#dua #kurandakidualar #amin #imsakiye #namazvakitleri")
+    return url, caption
+
+
+def evening_reel(day):
+    return dua_reel(day) if (day - REEL_EPOCH).days % 2 == 0 else ayet_reel(day, 1)
+
+
+def esma_story(day):
+    """Esmâ-ül Hüsnâ series continues as the evening story (one name per day)."""
+    from PIL import Image
+    from playwright.sync_api import sync_playwright
+    names = json.loads((HERE / "esma.json").read_text())
+    item = names[(day - ESMA_START).days % 99]
+    png = HERE / "story.png"
+    with sync_playwright() as p:
+        b = p.chromium.launch()
+        pg = b.new_page(viewport={"width": 1080, "height": 1920})
+        pg.add_init_script(f"window.__DATA__ = {json.dumps(item, ensure_ascii=False)};")
+        pg.goto((HERE / "esma.html").as_uri()); pg.wait_for_timeout(800)
+        pg.evaluate("render(9)"); pg.screenshot(path=str(png)); b.close()
+    dst = SITE / "story" / f"esma-{day.isoformat()}.jpg"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    Image.open(png).convert("RGB").save(dst, "JPEG", quality=92)
+    return f"{BASE_URL}/story/esma-{day.isoformat()}.jpg"
+
+
 GREETINGS = {
     "regaib":  ("Regaib Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
     "mirac":   ("Miraç Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
@@ -263,10 +418,10 @@ def main():
     except BaseException as e:
         print(f"special: skipped ({e})")
     add("morning_story", "story_image", story)
-    add("morning_reel", "reel", verse_reel)
+    add("morning_reel", "reel", ayet_reel)
     add("noon_post", "image", (lambda d: special["noon_post"]) if "noon_post" in special else hadis_post)
-    add("evening_story", "story_image", (lambda d: special["evening_story"]) if "evening_story" in special else dua_story)
-    add("evening_reel", "reel", esma_reel)
+    add("evening_story", "story_image", (lambda d: special["evening_story"]) if "evening_story" in special else esma_story)
+    add("evening_reel", "reel", evening_reel)
     out = SITE / "daily" / f"{day.isoformat()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
