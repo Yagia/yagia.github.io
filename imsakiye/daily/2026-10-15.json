@@ -1,0 +1,35 @@
+{
+ "date": "2026-10-15",
+ "items": [
+  {
+   "slot": "morning_story",
+   "kind": "story_image",
+   "url": "https://yagia.github.io/imsakiye/story/2026-10-15.jpg",
+   "caption": null
+  },
+  {
+   "slot": "morning_reel",
+   "kind": "reel",
+   "url": "https://yagia.github.io/imsakiye/reels/ayet-2026-10-15.mp4",
+   "caption": "Günün Ayeti 📖\n\n“Ben cinleri ve insanları, ancak bana kulluk etsinler diye yarattım.”\n(Zâriyât Sûresi, 56. ayet)\n\nMeal: Diyanet Vakfı\n\n📲 Her gün bir ayet, Arapça metni ve tefsiriyle İmsakiye uygulamasında.\n\n#gününayeti #kuranıkerim #ayet #meal #imsakiye #islam"
+  },
+  {
+   "slot": "noon_post",
+   "kind": "image",
+   "url": "https://yagia.github.io/imsakiye/post/2026-10-15.jpg",
+   "caption": "Günün Hadisi\n\n“Zenginlik mal çokluğuyla değil, gönül zenginliğiyledir.”\n— Buhârî\n\n💚 Kaydet, paylaş, hatırlat.\n\n#hadis #gününhadisi #sünnet #imsakiye #islam"
+  },
+  {
+   "slot": "evening_story",
+   "kind": "story_image",
+   "url": "https://yagia.github.io/imsakiye/story/dua-2026-10-15.jpg",
+   "caption": null
+  },
+  {
+   "slot": "evening_reel",
+   "kind": "reel",
+   "url": "https://yagia.github.io/imsakiye/reels/esma-2026-10-15.mp4",
+   "caption": "Esmâ-ül Hüsnâ · 2/99\ner-Rahmân ✨\n\nHer gün Allah'ın güzel isimlerinden birini paylaşıyoruz. Takipte kal, serinin tamamını kaçırma.\n\n📲 99 ismin tamamı İmsakiye uygulamasında, App Store'da ücretsiz.\n\n#esmaülhüsna #allahın99ismi #imsakiye #dua #zikir #islam"
+  }
+ ]
+}
