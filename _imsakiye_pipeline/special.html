@@ -1,0 +1,34 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+html,body{width:1080px}
+.brand{position:absolute;left:80px}
+#wrap{position:absolute;left:80px;right:80px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#orn{width:150px;height:150px;margin-bottom:26px}
+#big{font-family:"Fraunces",serif;font-weight:600;color:var(--mint);line-height:1;font-size:250px;margin:6px 0 4px}
+#title{font-family:"Fraunces",serif;font-weight:600;line-height:1.05}
+#sub{margin-top:26px;font-size:38px;line-height:1.35;color:var(--muted);max-width:860px}
+#dua{margin-top:56px;padding-top:44px;border-top:3px solid rgba(231,194,124,.6);width:820px}
+#dua .ar{font-size:54px;line-height:1.9;color:#fff}
+#dua .tr{margin-top:16px;font-family:"Fraunces",serif;font-weight:600;font-size:38px;line-height:1.3}
+#dua .src{margin-top:16px;font-size:26px;color:var(--gold);font-weight:600}
+#foot{position:absolute;left:0;right:0;text-align:center;font-size:26px;color:var(--muted)}
+</style></head><body><div class="bg"></div><svg class="pat" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="bgp" width="168" height="168" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="2"><rect x="42" y="42" width="84" height="84"/><rect x="42" y="42" width="84" height="84" transform="rotate(45 84 84)"/><circle cx="84" cy="84" r="16"/></g></pattern></defs><rect width="1680" height="2520" fill="url(#bgp)"/></svg>
+<div class="brand"><img src="icon.png"><div><div class="n">İmsakiye</div><div class="h">@imsakiye.social</div></div></div>
+<div id="wrap">
+  <svg id="orn" viewBox="0 0 100 100"><path d="M62 14a38 38 0 1 0 24 62A32 32 0 1 1 62 14z" fill="#e7c27c"/><path d="M74 30l3.2 9.8H87l-8 5.8 3 9.8-8-6-8 6 3-9.8-8-5.8h9.8z" fill="#86efac"/></svg>
+  <div id="kicker" class="kick"></div><div id="big"></div><div id="title"></div><div id="sub"></div>
+  <div id="dua"><div class="ar"></div><div class="tr"></div><div class="src"></div></div>
+</div>
+<div id="foot">İmsakiye · Namaz Vakti, Kur'an, Kıble</div>
+<script>
+const D=window.__DATA__, $=id=>document.getElementById(id), H=D.size==="post"?1350:1920;
+document.documentElement.style.height=document.body.style.height=H+"px";
+document.querySelector(".brand").style.top=(D.size==="post"?70:250)+"px";
+$("foot").style.bottom=(D.size==="post"?60:300)+"px";
+$("kicker").textContent=D.kicker||""; $("title").textContent=D.title; $("sub").textContent=D.sub||"";
+const K=D.size==="post"?1:1.18; $("title").style.fontSize=Math.round((D.title.length<14?120:D.title.length<24?100:84)*K)+"px"; $("sub").style.fontSize=Math.round(38*K)+"px";
+if(D.big){$("big").textContent=D.big;}else{$("big").remove();}
+if(D.dua){const d=$("dua");d.querySelector(".ar").textContent=D.dua.ar;d.querySelector(".tr").textContent=D.dua.tr;d.querySelector(".src").textContent=D.dua.source;
+  d.querySelector(".ar").style.fontSize=(D.dua.ar.length<70?54:44)+"px";}else{$("dua").remove();}
+function lay(){const w=$("wrap"),h=w.getBoundingClientRect().height,top=D.size==="post"?170:400,bottom=H-(D.size==="post"?110:360);w.style.top=Math.max(top,top+(bottom-top-h)/2)+"px";}
+lay();document.fonts.ready.then(lay);
+</script></body></html>

@@ -9,6 +9,7 @@ Nothing is published here; Supabase posts the files at the scheduled times.
 If the prayer-time sources disagree, no story is produced for that day.
 """
 import datetime as dt, json, re, shutil, subprocess, sys, urllib.request
+import religious
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -176,6 +177,74 @@ def dua_story(day):
     return f"{BASE_URL}/story/dua-{day.isoformat()}.jpg"
 
 
+GREETINGS = {
+    "regaib":  ("Regaib Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
+    "mirac":   ("Miraç Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
+    "berat":   ("Berat Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
+    "mevlid":  ("Mevlid Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
+    "kadir":   ("Kadir Gecesi'niz mübarek olsun", "Bin aydan hayırlı bu gecenin hayırlara vesile olmasını dileriz."),
+    "ramadanBegins": ("Hayırlı Ramazanlar", "Ramazan-ı Şerif'in sağlık, huzur ve bereketle geçmesini dileriz."),
+    "ramadanFeast":  ("Ramazan Bayramınız mübarek olsun", "Bayramın sevdiklerinizle birlikte huzur ve bereket getirmesini dileriz."),
+    "kurbanFeast":   ("Kurban Bayramınız mübarek olsun", "Bayramın sevdiklerinizle birlikte huzur ve bereket getirmesini dileriz."),
+    "ramadanArefe":  ("Arefe gününüz hayırlı olsun", "Yarın Ramazan Bayramı."),
+    "kurbanArefe":   ("Arefe gününüz hayırlı olsun", "Yarın Kurban Bayramı."),
+    "hijriNewYear":  ("Hicri yeni yılınız mübarek olsun", "Yeni yılın hayırlara vesile olmasını dileriz."),
+    "ashura":        ("Aşure Günü", "Bereketli ve hayırlı bir Aşure günü dileriz."),
+    "threeMonthsBegin": ("Üç Aylar başladı", "Receb, Şaban ve Ramazan'ın hayırlara vesile olmasını dileriz."),
+}
+DATIVE = {"regaib": "Regaib Kandili'ne", "mirac": "Miraç Kandili'ne", "berat": "Berat Kandili'ne", "mevlid": "Mevlid Kandili'ne",
+          "kadir": "Kadir Gecesi'ne", "ramadanBegins": "Ramazan'a"}
+TAGS = "#imsakiye #hayırlıcumalar #kandil #bayram #ramazan #dua"
+
+
+def quran_duas():
+    return [d for d in json.loads((HERE / "dua.json").read_text()) if re.search(r"\b(\d+):(\d+)", d["source"]) and d.get("ar")]
+
+
+def dua_of(day, shift=0):
+    items = quran_duas()
+    d = items[(day.toordinal() + shift) % len(items)]
+    s, a = map(int, re.search(r"\b(\d+):(\d+)", d["source"]).groups())
+    return {"ar": d["ar"], "tr": d["tr"], "source": f"{SURAHS[s - 1]} Sûresi, {a}. ayet"}
+
+
+def special_card(day, name, data, size):
+    folder = "post" if size == "post" else "story"
+    dst = SITE / folder / f"{name}-{day.isoformat()}.jpg"
+    still("special.html", {**data, "size": size}, dst, (1080, 1350 if size == "post" else 1920))
+    return f"{BASE_URL}/{folder}/{name}-{day.isoformat()}.jpg"
+
+
+def overrides(day):
+    """Special-day content that takes the place of the noon post and/or the evening story."""
+    out = {}
+    occ = [k for k, _ in religious.on(day) if k in GREETINGS]
+    if occ:
+        k = occ[-1] if "regaib" not in occ else "regaib"     # Regaib shares its day with the three months
+        title, sub = GREETINGS[k]
+        kicker = religious.NAMES[k]
+        card = {"kicker": kicker, "title": title, "sub": sub, "dua": dua_of(day)}
+        out["noon_post"] = (special_card(day, "ozel", card, "post"),
+                            f"{title} 🤲\n\n{sub}\n\n{card['dua']['tr']}\n({card['dua']['source']})\n\n{TAGS}")
+        out["evening_story"] = special_card(day, "ozel", {"kicker": kicker, "title": title, "sub": sub}, "story")
+        return out
+    if day.weekday() == 4:                                       # Friday
+        card = {"kicker": "Cuma", "title": "Hayırlı Cumalar", "sub": "Cumanız mübarek, dualarınız kabul olsun.", "dua": dua_of(day, 7)}
+        out["noon_post"] = (special_card(day, "cuma", card, "post"),
+                            f"Hayırlı Cumalar 🤲\n\n{card['dua']['tr']}\n({card['dua']['source']})\n\n"
+                            "Sevdiklerinle paylaş, duaya ortak olsunlar.\n\n#hayırlıcumalar #cuma #dua #imsakiye")
+    nxt = religious.next_after(day, set(DATIVE))
+    if nxt:
+        k, when = nxt
+        left = (when - day).days
+        if (k == "ramadanBegins" and left <= 30) or (k != "ramadanBegins" and left <= 3):
+            card = {"kicker": "Geri sayım", "big": str(left), "title": f"{DATIVE[k]} {left} gün",
+                    "sub": f"{when.day} {MONTHS[when.month - 1]} {DAYS[when.weekday()]}"
+                           + (" gecesi" if k in religious.NIGHTS else ""), "dua": dua_of(day, 3)}
+            out["evening_story"] = special_card(day, "sayac", card, "story")
+    return out
+
+
 def main():
     day = dt.datetime.now(TZ).date() if len(sys.argv) < 2 else dt.date.fromisoformat(sys.argv[1])
     manifest = {"date": day.isoformat(), "items": []}
@@ -188,10 +257,15 @@ def main():
         except BaseException as e:      # one failed piece must not stop the others
             print(f"{slot}: skipped ({e})")
 
+    special = {}
+    try:
+        special = overrides(day)
+    except BaseException as e:
+        print(f"special: skipped ({e})")
     add("morning_story", "story_image", story)
     add("morning_reel", "reel", verse_reel)
-    add("noon_post", "image", hadis_post)
-    add("evening_story", "story_image", dua_story)
+    add("noon_post", "image", (lambda d: special["noon_post"]) if "noon_post" in special else hadis_post)
+    add("evening_story", "story_image", (lambda d: special["evening_story"]) if "evening_story" in special else dua_story)
     add("evening_reel", "reel", esma_reel)
     out = SITE / "daily" / f"{day.isoformat()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
