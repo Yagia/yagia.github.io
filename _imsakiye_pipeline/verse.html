@@ -1,0 +1,32 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+html,body{width:1080px;height:1920px}
+#k{position:absolute;left:0;right:0;top:300px;text-align:center}
+#ref{position:absolute;left:0;right:0;top:350px;text-align:center;font-size:44px;color:var(--muted)}
+#txt{position:absolute;left:90px;right:90px;top:520px;height:820px;display:flex;align-items:center;justify-content:center;text-align:center}
+#txt p{line-height:1.32}
+#txt .w{display:inline-block;opacity:0}
+#rule{position:absolute;left:440px;width:200px;height:4px;top:470px;background:var(--gold);border-radius:2px}
+#src{position:absolute;left:0;right:0;top:1380px;text-align:center;font-size:28px;color:var(--muted)}
+#cta{position:absolute;left:50%;top:1450px;transform:translateX(-50%);display:flex;align-items:center;gap:20px;background:rgba(134,239,172,.12);border:2px solid rgba(134,239,172,.35);padding:18px 32px 18px 18px;border-radius:999px;white-space:nowrap;opacity:0}
+#cta img{width:66px;height:66px;border-radius:16px}#cta .t1{font-size:28px;font-weight:800}#cta .t2{font-size:22px;color:var(--muted);margin-top:2px}
+</style></head><body><div class="bg"></div><svg class="pat" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="bgp" width="168" height="168" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="2"><rect x="42" y="42" width="84" height="84"/><rect x="42" y="42" width="84" height="84" transform="rotate(45 84 84)"/><circle cx="84" cy="84" r="16"/></g></pattern></defs><rect width="1680" height="2520" fill="url(#bgp)"/></svg>
+<div id="k" class="kick">Günün Ayeti</div><div id="ref" class="serif"></div><div id="rule"></div>
+<div id="txt"><p id="p" class="serif"></p></div><div id="src">Meal: Diyanet Vakfı</div>
+<div id="cta"><img src="icon.png"><div><div class="t1">Her gün bir ayet, İmsakiye'de</div><div class="t2">Arapça metin, meal ve tefsir</div></div></div>
+<script>
+const D=window.__DATA__; const $=id=>document.getElementById(id);
+$("ref").textContent=D.ref;
+const words=D.text.split(/\s+/); $("p").innerHTML=words.map(w=>'<span class="w">'+w.replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</span>').join(" ");
+const L=D.text.length; $("p").style.fontSize=(L<90?78:L<160?66:L<260?56:L<380?48:42)+"px";
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+window.DURATION=D.duration;
+const W=[...document.querySelectorAll(".w")], T0=1.2, per=Math.min(0.32,(D.duration-6)/Math.max(1,W.length));
+window.render=function(t){
+  document.querySelector(".pat").style.transform="translate("+(-t*8)+"px,"+(-t*12)+"px)";
+  $("k").style.opacity=eo(t/0.5); $("ref").style.opacity=eo((t-0.3)/0.5); $("rule").style.transform="scaleX("+eo((t-0.5)/0.6)+")";
+  W.forEach((w,i)=>{const k=eo((t-T0-i*per)/0.45); w.style.opacity=k; w.style.transform="translateY("+((1-k)*24)+"px)"; w.style.filter="blur("+((1-k)*6)+"px)";});
+  const tc=T0+W.length*per+0.6; $("src").style.opacity=eo((t-tc)/0.5);
+  $("cta").style.opacity=eo((t-tc-0.6)/0.5);
+  document.body.style.filter="brightness("+(clamp(t/0.4)*(1-clamp((t-(D.duration-0.6))/0.6)))+")";
+};render(0);
+</script></body></html>

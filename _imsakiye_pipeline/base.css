@@ -1,0 +1,20 @@
+@font-face { font-family:"Inter"; font-weight:100 900; src:url("node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2") format("woff2"); unicode-range:U+0100-024F; }
+@font-face { font-family:"Inter"; font-weight:100 900; src:url("node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2"); }
+@font-face { font-family:"Fraunces"; font-weight:600; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-ext-600-normal.woff2") format("woff2"); unicode-range:U+0100-024F; }
+@font-face { font-family:"Fraunces"; font-weight:600; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family:"NaskhAr"; font-weight:700; src:url("node_modules/@fontsource/noto-naskh-arabic/files/noto-naskh-arabic-arabic-700-normal.woff2") format("woff2"); }
+:root { --mint:#86efac; --cream:#f3f6f2; --gold:#e7c27c; --muted:rgba(243,246,242,.72); }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Inter",sans-serif; color:var(--cream); background:#0b1c15; overflow:hidden; position:relative; }
+.bg { position:absolute; inset:0; background:
+  radial-gradient(900px 900px at 50% 40%, #2f6d55 0%, rgba(47,109,85,0) 70%),
+  linear-gradient(180deg,#1c4636 0%,#0b1c15 100%); }
+.pat { position:absolute; inset:-300px; opacity:.05; }
+.kick { font-size:30px; font-weight:700; letter-spacing:8px; color:var(--mint); text-transform:uppercase; }
+.serif { font-family:"Fraunces",serif; font-weight:600; }
+.ar { font-family:"NaskhAr",serif; font-weight:700; direction:rtl; }
+.brand { display:flex; align-items:center; gap:18px; }
+.brand img { width:72px; height:72px; border-radius:18px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+.brand .n { font-family:"Fraunces",serif; font-weight:600; font-size:36px; }
+.brand .h { font-size:24px; color:var(--muted); }
+.qmark { font-family:"Fraunces",serif; font-size:220px; line-height:.6; color:var(--mint); opacity:.35; }

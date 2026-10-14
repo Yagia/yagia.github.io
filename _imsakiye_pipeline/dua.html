@@ -1,0 +1,22 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+html,body{width:1080px;height:1920px}
+.brand{position:absolute;left:80px;top:250px}
+#k{position:absolute;left:0;right:0;top:580px;text-align:center}
+#ar{position:absolute;left:80px;right:80px;top:680px;text-align:center;line-height:1.9;color:#fff;text-shadow:0 0 50px rgba(134,239,172,.3)}
+#rule{position:absolute;left:440px;width:200px;height:4px;background:var(--gold);border-radius:2px}
+#tr{position:absolute;left:90px;right:90px;text-align:center;line-height:1.32}
+#src{position:absolute;left:0;right:0;text-align:center;font-size:30px;color:var(--gold);font-weight:600}
+#foot{position:absolute;left:0;right:0;top:1580px;text-align:center;font-size:26px;color:var(--muted)}
+</style></head><body><div class="bg"></div><svg class="pat" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="bgp" width="168" height="168" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="2"><rect x="42" y="42" width="84" height="84"/><rect x="42" y="42" width="84" height="84" transform="rotate(45 84 84)"/><circle cx="84" cy="84" r="16"/></g></pattern></defs><rect width="1680" height="2520" fill="url(#bgp)"/></svg>
+<div class="brand"><img src="icon.png"><div><div class="n">İmsakiye</div><div class="h">@imsakiye.social</div></div></div>
+<div id="k" class="kick">Günün Duası</div>
+<div id="ar" class="ar"></div><div id="rule"></div><div id="tr" class="serif"></div><div id="src"></div>
+<div id="foot">Âmin demeyi unutma · 75 dua İmsakiye'de</div>
+<script>const D=window.__DATA__,$=id=>document.getElementById(id);
+$("ar").textContent=D.ar; $("tr").textContent=D.tr; $("src").textContent=D.source;
+$("ar").style.fontSize=(D.ar.length<60?74:D.ar.length<100?62:54)+"px";
+$("tr").style.fontSize=(D.tr.length<80?54:D.tr.length<120?48:42)+"px";
+function lay(){const arB=$("ar").getBoundingClientRect().bottom; $("rule").style.top=(arB+40)+"px"; $("tr").style.top=(arB+90)+"px";
+const trB=$("tr").getBoundingClientRect().bottom; $("src").style.top=(trB+36)+"px";}
+lay(); document.fonts.ready.then(lay);
+</script></body></html>
