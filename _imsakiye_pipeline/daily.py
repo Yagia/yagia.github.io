@@ -103,11 +103,18 @@ def frames_dir():
     return frames
 
 
-def encode_reel(frames, fps, dur, dst):
+def encode_reel(frames, fps, dur, dst, vo=None):
     subprocess.run([sys.executable, str(HERE / "music.py"), str(dur), str(HERE / "music.wav"), str(dur + 5), "calm"], check=True)
+    audio = HERE / "music.wav"
+    if vo:     # music sits under the narration and dips while it speaks
+        audio = HERE / "mix.wav"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(HERE / "music.wav"), "-i", str(vo), "-filter_complex",
+                        "[1:a]aformat=channel_layouts=stereo,asplit=2[v1][v2];[0:a]volume=0.2[m];"
+                        "[m][v1]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=450[md];"
+                        "[md][v2]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=9", "-ar", "48000", "-ac", "2", str(audio)], check=True)
     dst.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(fps), "-i", str(frames / "%05d.jpg"),
-                    "-i", str(HERE / "music.wav"), "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p",
+                    "-i", str(audio), "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p",
                     "-crf", "20", "-preset", "slow", "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-shortest",
                     "-movflags", "+faststart", str(dst)], check=True)
 
@@ -242,12 +249,13 @@ def shoot_reel(data, frames, fps=30):
         pg.add_init_script(f"window.__DATA__ = {json.dumps(data, ensure_ascii=False)};")
         pg.goto((HERE / "reel.html").as_uri())
         dur = float(pg.evaluate("window.READY"))
+        starts = pg.evaluate("window.VO_AT")
         pg.wait_for_timeout(500)
         for i in range(int(dur * fps)):
             pg.evaluate(f"render({i / fps})")
             pg.screenshot(path=str(frames / f"{i:05d}.jpg"), type="jpeg", quality=92)
         b.close()
-    return dur
+    return dur, starts
 
 
 def app_shot(day, which):
@@ -257,14 +265,75 @@ def app_shot(day, which):
 
 def render_reel(day, data, stem):
     frames = frames_dir()
-    dur = shoot_reel(data, frames)
+    say = data.pop("say", {})
+    clips = vo_clips(say)
+    data["vo"] = {k: v[1] for k, v in clips.items()}
+    pre = data.pop("vo_prefix", "")
+    data["vo_pre"] = round(clips["s2"][1] * len(pre) / len(say["s2"]), 3) if pre and "s2" in clips else 0
+    dur, starts = shoot_reel(data, frames)
+    vo = None
+    if clips:
+        vo = HERE / "vo_tmp" / "track.wav"
+        ins, fl = [], []
+        for i, (sc, (wav, _)) in enumerate(clips.items()):
+            ins += ["-i", str(wav)]; ms = int(starts[sc] * 1000)
+            fl.append(f"[{i}:a]adelay={ms}|{ms}[c{i}]")
+        fc = ";".join(fl) + ";" + "".join(f"[c{i}]" for i in range(len(clips))) + \
+            f"amix=inputs={len(clips)}:normalize=0,apad=whole_dur={dur},atrim=0:{dur},highpass=f=70," \
+            "equalizer=f=3200:t=q:w=1.2:g=1.5,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-16:TP=-2:LRA=7[v]"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *ins, "-filter_complex", fc, "-map", "[v]", "-ar", "48000", "-ac", "1", str(vo)], check=True)
     dst = SITE / "reels" / f"{stem}-{day.isoformat()}.mp4"
-    encode_reel(frames, 30, int(dur + 0.999), dst)
+    encode_reel(frames, 30, int(dur + 0.999), dst, vo)
     return f"{BASE_URL}/reels/{stem}-{day.isoformat()}.mp4"
 
 
 FOLLOW = ("Her gün bir ayet ve dua için @imsakiye.social'ı takip et.\n"
           "📲 İmsakiye uygulaması App Store'da ücretsiz: namaz vakitleri, Kur'an, kıble ve dualar. Profildeki bağlantıdan indir.")
+
+
+# ---- narration (Azure, en-US-RyanMultilingualNeural speaking Turkish; best fluency in our tests).
+# Clips are generated ahead of time and kept in vo/ (named by a hash of voice+rate+text), so the
+# renderer needs no credentials. A clip that is missing simply leaves that scene without narration.
+VO_VOICE, VO_RATE = "en-US-RyanMultilingualNeural", "-6%"
+SPOKEN_CTA = {"amin": "Yorumlara âmin yaz.", "share": "İhtiyacı olan birine gönder.", "save": "Kaydet, tekrar oku.",
+              "salavat": "Yorumlara bir salavat bırak.", "hamd": "Yorumlara bir elhamdülillah bırak."}
+
+
+def speakable(t):
+    t = t.replace("\n", " ").replace("…", "").replace("“", "").replace("”", "").replace('"', "")
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def vo_name(text):
+    import hashlib
+    return hashlib.sha1(f"{VO_VOICE}|{VO_RATE}|{text}".encode()).hexdigest()[:16]
+
+
+def say_ayet(e, sura, a, line):
+    return {"s1": speakable(e["hook"]), "s2": speakable(f"{sura} Sûresi, {a}. ayet. {e['ex']}"), "s3": speakable(e["note"]),
+            "s4": SPOKEN_CTA.get(e["cta"]) or speakable(e["cta"]), "s5": f"İmsakiye. {line}. App Store'da ücretsiz."}
+
+
+def say_dua(e, d, line):
+    return {"s1": speakable(e["hook"]), "s2": speakable(d["tr"]), "s3": speakable(e["note"]),
+            "s4": SPOKEN_CTA["amin"], "s5": f"İmsakiye. {line}. App Store'da ücretsiz."}
+
+
+def vo_clips(say):
+    """{scene: (wav path, seconds)} for the clips we have; silence is trimmed at both ends."""
+    out = {}
+    tmp = HERE / "vo_tmp"; tmp.mkdir(exist_ok=True)
+    for sc, text in say.items():
+        src = HERE / "vo" / f"{vo_name(text)}.mp3"
+        if not src.exists():
+            print(f"narration missing for {sc}: {text[:40]}"); continue
+        wav = tmp / f"{sc}.wav"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-af",
+                        "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse",
+                        "-ar", "48000", "-ac", "1", str(wav)], check=True)
+        d = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(wav)]))
+        out[sc] = (wav, round(d, 3))
+    return out
 
 
 def ayet_reel(day, which=0):
@@ -282,6 +351,8 @@ def ayet_reel(day, which=0):
             "hook": e["hook"], "kicker2": f"{tr_upper(sura)} SÛRESİ · {a}. AYET",
             "ar": ar if full and len(ar) <= 110 else "", "text": shown, "hl": e["hl"], "src": "Meal: Diyanet Vakfı",
             "note": e["note"], "ctaBig": big, "ctaSmall": small, "ctaIcon": icon, "app": app_shot(day, which)}
+    data["say"] = say_ayet(e, sura, a, data["app"]["line"])
+    data["vo_prefix"] = f"{sura} Sûresi, {a}. ayet. "
     url = render_reel(day, data, "ayet" if which == 0 else "ayet2")
     extra = [l for k, l in (("share", CTA["share"][3]), ("save", CTA["save"][3])) if e["cta"] != k]
     caption = (f"{e['hook'].replace(chr(10), ' ')}\n\n“{shown}”\n({sura} Sûresi, {a}. ayet · Meal: Diyanet Vakfı)\n\n"
@@ -302,6 +373,7 @@ def dua_reel(day):
             "kicker2": f"{tr_upper(sura)} SÛRESİ · {a}. {tr_upper(unit)}", "ar": d["ar"].strip(), "text": d["tr"].strip(),
             "hl": "", "src": "", "note": e["note"], "ctaBig": big, "ctaSmall": small, "ctaIcon": icon,
             "app": app_shot(day, 1)}
+    data["say"] = say_dua(e, d, data["app"]["line"])
     url = render_reel(day, data, "dua")
     caption = (f"{e['hook'].replace(chr(10), ' ')}\n\n{d['ar'].strip()}\n\n“{d['tr'].strip()}”\n({sura} Sûresi, {a}. {unit})\n\n"
                f"{e['note'].replace(chr(10), ' ')}\n\n{cap}\n📩 Bu duayı sevdiklerine gönder.\n🔖 Kaydet, tekrar oku.\n\n{FOLLOW}\n\n"

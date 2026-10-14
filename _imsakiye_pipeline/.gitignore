@@ -3,3 +3,5 @@ frames/
 __pycache__/
 music.wav
 story.png
+vo_tmp/
+mix.wav
