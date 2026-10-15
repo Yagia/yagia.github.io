@@ -340,6 +340,20 @@ def vo_name(text):
     return hashlib.sha1(f"{VO_VOICE}|{VO_RATE}|{text}".encode()).hexdigest()[:16]
 
 
+# ElevenLabs narration (Seyfullah Kartal, eleven_v3 with delivery cues) replaces the Azure clips wherever a clip exists.
+EL_VOICE, EL_MODEL = "mF7tIc9VLrznhGooGjaT", "eleven_v3"
+EL_TAGS = {"s1": "[softly] [curious] ", "s2": "[reverent] [slowly] ", "s3": "[warmly] [thoughtful] ", "s4": "[gently] ", "s5": "[warmly] "}
+
+
+def el_text(scene, text):
+    return EL_TAGS.get(scene, "") + text
+
+
+def el_name(tagged):
+    import hashlib
+    return "el_" + hashlib.sha1(f"{EL_VOICE}|{EL_MODEL}|{tagged}".encode()).hexdigest()[:16]
+
+
 def say_ayet(e, sura, a, line):
     return {"s1": speakable(e["hook"]), "s2": speakable(f"{sura} Sûresi, {a}. ayet. {e['ex']}"), "s3": speakable(e["note"]),
             "s4": SPOKEN_CTA.get(e["cta"]) or speakable(e["cta"]), "s5": speakable(f"İmsakiye. {line}. App Store'da ücretsiz.")}
@@ -355,7 +369,9 @@ def vo_clips(say):
     out = {}
     tmp = HERE / "vo_tmp"; tmp.mkdir(exist_ok=True)
     for sc, text in say.items():
-        src = HERE / "vo" / f"{vo_name(text)}.mp3"
+        src = HERE / "vo" / f"{el_name(el_text(sc, text))}.mp3"
+        if not src.exists():
+            src = HERE / "vo" / f"{vo_name(text)}.mp3"
         if not src.exists():
             print(f"narration missing for {sc}: {text[:40]}"); continue
         wav = tmp / f"{sc}.wav"
@@ -476,28 +492,38 @@ def kissa_segments(k):
     return segs
 
 
-def kissa_say(segs):
+KISSA_TAGS = {"hook": "[softly] [mysterious] ", "line": "", "quote": "[reverent] [slowly] ",
+              "lesson": "[warmly] [heartfelt] ", "cta": "[gently] "}       # eleven_v3 delivery cues
+
+
+def kissa_say(segs, tagged=False):
     paras = [re.sub(r"[()\"“”]", "", sp).replace("…", "...") for *_, sp in segs]
-    return "\n\n".join(speakable(p) for p in paras)
+    return "\n\n".join((KISSA_TAGS.get(t, "") if tagged else "") + speakable(p) for (t, *_), p in zip(segs, paras))
 
 
-KISSA_VOICE = "mF7tIc9VLrznhGooGjaT"      # ElevenLabs "Seyfullah Kartal - Deep and Muffled" (eleven_multilingual_v2)
+KISSA_VOICE, KISSA_MODEL = "mF7tIc9VLrznhGooGjaT", "eleven_v3"   # ElevenLabs "Seyfullah Kartal - Deep and Muffled"
+
+
+def kissa_vo_text(k):
+    return kissa_say(kissa_segments(k), tagged=KISSA_MODEL == "eleven_v3")
 
 
 def kissa_vo_name(k):
     import hashlib
-    return "kissa-" + k["id"] + "-" + hashlib.sha1((KISSA_VOICE + kissa_say(kissa_segments(k))).encode()).hexdigest()[:10]
+    return "kissa-" + k["id"] + "-" + hashlib.sha1((KISSA_VOICE + KISSA_MODEL + kissa_vo_text(k)).encode()).hexdigest()[:10]
 
 
 def times_from_alignment(path, text):
     """Paragraph start/end times from ElevenLabs character timings (text must be what was synthesised)."""
     al = json.loads(Path(path).read_text())
     chars, st, en = al["characters"], al["character_start_times_seconds"], al["character_end_times_seconds"]
-    if "".join(chars) != text:
-        return None
+    spoken = "".join(chars)
     out, pos = [], 0
     for para in text.split("\n\n"):
-        i = text.index(para, pos); j = i + len(para) - 1; pos = j + 1
+        i = spoken.find(para, pos)
+        if i < 0:
+            return None
+        j = i + len(para) - 1; pos = j + 1
         out.append((st[i], en[j]))
     return out
 
