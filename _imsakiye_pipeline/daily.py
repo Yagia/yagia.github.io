@@ -481,7 +481,7 @@ def kissa_say(segs):
     return "\n\n".join(speakable(p) for p in paras)
 
 
-KISSA_VOICE = "JBFqnCBsd6RMkjVDRZzb"      # ElevenLabs voice id (eleven_multilingual_v2)
+KISSA_VOICE = "mF7tIc9VLrznhGooGjaT"      # ElevenLabs "Seyfullah Kartal - Deep and Muffled" (eleven_multilingual_v2)
 
 
 def kissa_vo_name(k):
