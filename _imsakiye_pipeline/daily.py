@@ -241,15 +241,15 @@ def ayet_entry(day, which):
     raise SystemExit("no valid verse entry")
 
 
-def shoot_reel(data, frames, fps=30):
+def shoot_reel(data, frames, fps=30, page="reel.html"):
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
         b = p.chromium.launch()
         pg = b.new_page(viewport={"width": 1080, "height": 1920})
         pg.add_init_script(f"window.__DATA__ = {json.dumps(data, ensure_ascii=False)};")
-        pg.goto((HERE / "reel.html").as_uri())
+        pg.goto((HERE / page).as_uri())
         dur = float(pg.evaluate("window.READY"))
-        starts = pg.evaluate("window.VO_AT")
+        starts = pg.evaluate("window.VO_AT || {}")
         pg.wait_for_timeout(500)
         for i in range(int(dur * fps)):
             pg.evaluate(f"render({i / fps})")
@@ -452,6 +452,119 @@ def esma_post(day):
     return f"{BASE_URL}/post/esma-{day.isoformat()}.jpg", caption
 
 
+# ---------------------------------------------------------------- Kur'an kıssaları (one narrated story a day)
+import kissa_content as KC
+
+KISSA_EPOCH = dt.date(2026, 10, 16)
+KISSA_STYLE = ("Narrate the following Turkish text as a deep, warm male storyteller telling a moving story from the Quran "
+               "in a short film. Native Turkish pronunciation. Speak slowly and with feeling: build tension, emphasise key words, "
+               "make a clear pause between paragraphs, and read the quoted verses softly and reverently.")
+
+
+def kissa_segments(k):
+    """[(type, on-screen text, ref, spoken text)] – hook, beats, lesson, call to action."""
+    segs = [("hook", k["hook"], "", k["hook"])]
+    for b in k["beats"]:
+        if isinstance(b, tuple):
+            s, a = b[1].split(":")
+            segs.append(("quote", b[2].strip('"'), f"{tr_upper(SURAHS[int(s) - 1])} · {a}", b[2]))
+        else:
+            segs.append(("line", b, "", b))
+    segs.append(("lesson", k["lesson"], "", k["lesson"]))
+    big, small, icon, _ = CTA[k["cta"]]
+    segs.append(("cta", big.replace("\n", " "), icon + "|" + small, SPOKEN_CTA[k["cta"]]))
+    return segs
+
+
+def kissa_say(segs):
+    paras = [re.sub(r"[()\"“”]", "", sp).replace("…", "...") for *_, sp in segs]
+    return "\n\n".join(speakable(p) for p in paras)
+
+
+def kissa_vo_name(k):
+    import hashlib
+    return "kissa-" + k["id"] + "-" + hashlib.sha1((KISSA_STYLE + kissa_say(kissa_segments(k))).encode()).hexdigest()[:10]
+
+
+def split_by_pauses(wav, texts):
+    """Start/end of each paragraph in the narration: the N-1 longest pauses separate N paragraphs."""
+    import wave, numpy as np
+    w = wave.open(str(wav)); sr = w.getframerate()
+    x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
+    hop = int(sr * 0.02); n = len(x) // hop
+    db = np.array([20 * np.log10(np.sqrt((x[i*hop:(i+1)*hop] ** 2).mean()) + 1e-9) for i in range(n)])
+    quiet = db < max(-45, db.max() - 38)
+    runs, i = [], 0
+    while i < n:
+        if quiet[i]:
+            j = i
+            while j < n and quiet[j]: j += 1
+            if i > 0 and j < n: runs.append((j - i, i, j))
+            i = j
+        else: i += 1
+    speech = np.where(~quiet)[0]
+    t0, t1 = speech[0] * 0.02, (speech[-1] + 1) * 0.02
+    k = len(texts) - 1
+    gaps = sorted(sorted(runs, reverse=True)[:k], key=lambda r: r[1])
+    if len(gaps) == k:
+        bounds = [(g[1] * 0.02, g[2] * 0.02) for g in gaps]
+        segs = [(t0 if i == 0 else bounds[i-1][1], t1 if i == k else bounds[i][0]) for i in range(k + 1)]
+        ratios = [(e - s) / max(1, len(t)) for (s, e), t in zip(segs, texts)]
+        med = sorted(ratios)[len(ratios) // 2]
+        if all(0.35 < r / med < 2.8 for r in ratios):
+            return segs
+    print("kissa: pause split failed, using text lengths")
+    tot = sum(map(len, texts)); acc, out = t0, []
+    for t in texts:
+        d = (t1 - t0) * len(t) / tot; out.append((acc, acc + d)); acc += d
+    return out
+
+
+def kissa_reel(day):
+    n = (day - KISSA_EPOCH).days
+    k = KC.KISSA[n % len(KC.KISSA)]
+    segs = kissa_segments(k)
+    for b in k["beats"]:                           # every quote must match the translation exactly
+        if isinstance(b, tuple):
+            tr, _ = quran_text(b[1])
+            if norm(b[2]) not in norm(tr):
+                raise SystemExit(f"kissa {k['id']}: quote mismatch {b[1]}")
+    src = HERE / "vo" / f"{kissa_vo_name(k)}.mp3"
+    if not src.exists():
+        raise SystemExit(f"kissa {k['id']}: narration missing ({src.name})")
+    tmp = HERE / "vo_tmp"; tmp.mkdir(exist_ok=True)
+    wav = tmp / "kissa.wav"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-ar", "48000", "-ac", "1", str(wav)], check=True)
+    times = split_by_pauses(wav, [sp for *_, sp in segs])
+    lead = 0.6
+    beats = []
+    for (typ, text, ref, _), (a, b) in zip(segs, times):
+        d = {"type": typ, "text": text, "start": round(a + lead, 3), "end": round(b + lead, 3)}
+        if typ == "quote": d["ref"] = ref
+        if typ == "cta": d["icon"], d["small"] = ref.split("|")
+        beats.append(d)
+    end_start = beats[-1]["end"] + 0.9
+    data = {"title": k["title"], "seed": n, "beats": beats, "endStart": round(end_start, 2),
+            "duration": round(end_start + 3.8, 2), "app": app_shot(day, 0)}
+    frames = frames_dir()
+    dur, _ = shoot_reel(data, frames, page="kissa.html")
+    vo = tmp / "kissa_track.wav"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-af",
+                    f"adelay={int(lead*1000)}|{int(lead*1000)},apad=whole_dur={dur},atrim=0:{dur},highpass=f=60,"
+                    "acompressor=threshold=-20dB:ratio=2:attack=10:release=150,loudnorm=I=-16:TP=-2:LRA=9",
+                    "-ar", "48000", "-ac", "1", str(vo)], check=True)
+    dst = SITE / "reels" / f"kissa-{day.isoformat()}.mp4"
+    encode_reel(frames, 30, int(dur + 0.999), dst, vo)
+    refs = sorted({f"{SURAHS[int(b[1].split(':')[0]) - 1]} {b[1].split(':')[1]}" for b in k["beats"] if isinstance(b, tuple)},
+                  key=lambda r: r)
+    story = "\n".join(("“" + b[2].strip('"') + "”") if isinstance(b, tuple) else b for b in k["beats"])
+    caption = (f"{k['hook']}\n\n{story}\n\n{k['lesson']}\n\n(Kaynak: {', '.join(refs)} · Meal: Diyanet Vakfı)\n\n"
+               f"{CTA[k['cta']][3]}\n📩 Bu kıssayı bilmeyen birine gönder.\n\n"
+               "Her gün bir Kur'an kıssası için @imsakiye.social'ı takip et.\n📲 İmsakiye uygulaması App Store'da ücretsiz.\n\n"
+               "#kurankıssaları #kuran #peygamberler #ibret #imsakiye")
+    return f"{BASE_URL}/reels/kissa-{day.isoformat()}.mp4", caption
+
+
 GREETINGS = {
     "regaib":  ("Regaib Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
     "mirac":   ("Miraç Kandiliniz mübarek olsun", "Bu mübarek gecenin ailemize, ülkemize ve tüm İslam âlemine hayırlar getirmesini dileriz."),
@@ -549,6 +662,7 @@ def main():
     elif "evening_story" not in special:                        # occasion days already have the noon card
         add("evening_post", "image", esma_post)
     add("evening_reel", "reel", evening_reel)
+    add("kissa_reel", "reel", kissa_reel)
     out = SITE / "daily" / f"{day.isoformat()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(manifest, ensure_ascii=False, indent=1))

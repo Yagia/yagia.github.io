@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+@font-face { font-family:"FrauncesR"; font-weight:400; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-ext-400-normal.woff2") format("woff2"); unicode-range:U+0100-024F; }
+@font-face { font-family:"FrauncesR"; font-weight:400; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family:"FrauncesR"; font-weight:400; font-style:italic; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-ext-400-italic.woff2") format("woff2"); unicode-range:U+0100-024F; }
+@font-face { font-family:"FrauncesR"; font-weight:400; font-style:italic; src:url("node_modules/@fontsource/fraunces/files/fraunces-latin-400-italic.woff2") format("woff2"); }
+:root { --gold:#e9c784; --gold2:#f6dca6; --ink:#07160f; }
+html,body { width:1080px; height:1920px; }
+body { background:#06140e; }
+#world { position:absolute; inset:0; transform-origin:50% 60%; }
+#sky { position:absolute; inset:0; background:
+  radial-gradient(1100px 900px at 50% 78%, rgba(233,199,132,.16) 0%, rgba(233,199,132,0) 60%),
+  radial-gradient(1200px 1300px at 50% 35%, #1d4a39 0%, rgba(29,74,57,0) 72%),
+  linear-gradient(180deg,#0f2c21 0%,#081a12 55%,#050f0a 100%); }
+#vig { position:absolute; inset:0; background:radial-gradient(130% 90% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); pointer-events:none; }
+#stars, #dust, #scene, #lanterns { position:absolute; inset:0; }
+.star { position:absolute; border-radius:50%; background:#fff; }
+.mote { position:absolute; border-radius:50%; background:var(--gold2); filter:blur(.6px); }
+/* frame */
+.corner { position:absolute; width:70px; height:70px; border:3px solid var(--gold); opacity:.55; }
+.c1 { left:54px; top:54px; border-right:none; border-bottom:none; }
+.c2 { right:54px; top:54px; border-left:none; border-bottom:none; }
+.c3 { left:54px; bottom:54px; border-right:none; border-top:none; }
+.c4 { right:54px; bottom:54px; border-left:none; border-top:none; }
+#bar { position:absolute; left:90px; right:90px; bottom:96px; height:48px; display:flex; align-items:center; justify-content:space-between; font-size:24px; color:rgba(243,246,242,.7); }
+#bar .b { display:flex; align-items:center; gap:12px; font-family:"Fraunces",serif; font-weight:600; font-size:28px; color:var(--cream); }
+#bar .b img { width:44px; height:44px; border-radius:11px; }
+#dots { display:flex; gap:10px; }
+#dots i { display:block; width:34px; height:5px; border-radius:3px; background:rgba(243,246,242,.22); overflow:hidden; position:relative; }
+#dots i b { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--gold); }
+/* scenes */
+.sc { position:absolute; left:0; right:0; top:0; bottom:0; opacity:0; }
+.box { position:absolute; left:110px; right:110px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.kick { color:var(--gold); font-size:27px; letter-spacing:7px; }
+.pill { display:inline-block; border:2px solid rgba(233,199,132,.6); color:var(--gold); border-radius:999px; padding:12px 30px; font-size:25px; font-weight:700; letter-spacing:5px; }
+.w { display:inline-block; white-space:pre; }
+.gold { color:var(--gold); }
+#hook { font-family:"Fraunces",serif; font-weight:600; line-height:1.14; letter-spacing:-.5px; }
+#ar { font-family:"NaskhAr",serif; font-weight:700; direction:rtl; line-height:1.75; color:#fff; text-shadow:0 0 50px rgba(233,199,132,.28); }
+#tr { font-family:"FrauncesR",serif; font-weight:400; line-height:1.36; color:#f4f1e8; }
+#tr .gold { font-family:"Fraunces",serif; font-weight:600; }
+#src { font-size:24px; color:rgba(243,246,242,.6); letter-spacing:1px; }
+#note { font-family:"FrauncesR",serif; font-style:italic; font-size:76px; line-height:1.22; color:#f4f1e8; }
+#rule2 { width:160px; height:3px; background:var(--gold); border-radius:2px; }
+#ctaIco { width:170px; height:170px; border-radius:50%; border:3px solid rgba(233,199,132,.75); display:flex; align-items:center; justify-content:center; position:relative; }
+#ctaIco svg { width:84px; height:84px; }
+#ring { position:absolute; inset:-3px; border-radius:50%; border:3px solid var(--gold); }
+#ctaBig { font-family:"Fraunces",serif; font-weight:600; font-size:70px; line-height:1.18; }
+#ctaSmall { font-size:30px; color:rgba(243,246,242,.72); }
+#follow { font-size:28px; color:rgba(243,246,242,.85); border-top:1px solid rgba(233,199,132,.35); padding-top:26px; }
+/* end card */
+#phone { position:absolute; left:50%; top:760px; width:540px; height:1170px; margin-left:-270px; border-radius:76px; background:#0b0f0d; padding:16px;
+  box-shadow:0 0 0 3px rgba(233,199,132,.55), 0 50px 120px rgba(0,0,0,.65), 0 0 160px rgba(233,199,132,.18); }
+#phone img { width:100%; height:100%; border-radius:62px; object-fit:cover; object-position:top; display:block; }
+#endHead { position:absolute; left:0; right:0; top:250px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+#endHead .ic { width:150px; height:150px; border-radius:36px; box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 0 2px rgba(255,255,255,.08); }
+#endHead .nm { font-family:"Fraunces",serif; font-weight:600; font-size:84px; margin-top:26px; }
+#endHead .ln { font-size:33px; color:rgba(243,246,242,.8); margin-top:10px; }
+#badge { position:absolute; left:50%; top:1560px; transform:translateX(-50%); white-space:nowrap; display:flex; align-items:center; gap:18px;
+  background:#f6f2e7; color:#0b1c15; border-radius:999px; padding:24px 44px; font-size:36px; font-weight:800; box-shadow:0 24px 60px rgba(0,0,0,.5); }
+#badge svg { width:40px; height:40px; }
+#endShade { position:absolute; left:0; right:0; bottom:0; height:700px; background:linear-gradient(180deg, rgba(6,20,14,0) 0%, rgba(6,20,14,.92) 55%, #06140e 100%); }
+#flash { position:absolute; inset:0; background:#fff3d6; opacity:0; pointer-events:none; }
+.card { position:absolute; left:100px; right:100px; display:flex; flex-direction:column; align-items:center; text-align:center; opacity:0; }
+.card .k { color:var(--gold); font-size:26px; letter-spacing:7px; font-weight:700; }
+.card .ttl { font-family:"FrauncesR",serif; font-style:italic; font-size:40px; color:rgba(246,220,166,.9); margin-top:14px; }
+.card .hook { font-family:"Fraunces",serif; font-weight:600; font-size:94px; line-height:1.14; letter-spacing:-.5px; margin-top:44px; }
+.card .line { font-family:"FrauncesR",serif; font-size:66px; line-height:1.3; color:#f4f1e8; }
+.card .qt { font-family:"FrauncesR",serif; font-style:italic; font-size:62px; line-height:1.32; color:#f6ead0; }
+.card .qm { font-family:"Fraunces",serif; font-size:170px; line-height:.5; color:var(--gold); opacity:.55; height:70px; }
+.card .ref { margin-top:34px; border:2px solid rgba(233,199,132,.6); color:var(--gold); border-radius:999px; padding:10px 28px; font-size:24px; font-weight:700; letter-spacing:4px; }
+.card .lesson { font-family:"Fraunces",serif; font-weight:600; font-size:72px; line-height:1.2; color:var(--gold2); }
+.card .rule { width:150px; height:3px; background:var(--gold); border-radius:2px; margin-bottom:50px; }
+.card .ctaT { font-family:"Fraunces",serif; font-weight:600; font-size:66px; line-height:1.2; margin-top:56px; }
+.card .ctaS { font-size:30px; color:rgba(243,246,242,.75); margin-top:26px; }
+.card .ico { width:160px; height:160px; border-radius:50%; border:3px solid rgba(233,199,132,.75); display:flex; align-items:center; justify-content:center; }
+.card .ico svg { width:80px; height:80px; }
+#prog { position:absolute; left:90px; right:90px; bottom:76px; height:4px; background:rgba(243,246,242,.15); border-radius:2px; overflow:hidden; }
+#prog b { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--gold); }
+</style>
+</head>
+<body>
+<div id="world">
+  <div id="sky"></div>
+  <div id="stars"></div>
+  <svg id="scene" viewBox="0 0 1080 1920" width="1080" height="1920"></svg>
+  <svg id="lanterns" viewBox="0 0 1080 1920" width="1080" height="1920"></svg>
+  <div id="dust"></div>
+</div>
+<div id="vig"></div>
+<div id="cards"></div>
+<div class="sc" id="s5"><div id="phone"><img id="shot"></div><div id="endShade"></div>
+  <div id="endHead"><img class="ic" src="icon.png"><div class="nm">İmsakiye</div><div class="ln" id="endLine"></div></div>
+  <div id="badge"><svg viewBox="0 0 24 24"><path fill="#0b1c15" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg>App Store'da ücretsiz</div>
+</div>
+<div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+<div id="bar"><div class="b"><img src="icon.png">imsakiye</div><div>@imsakiye.social</div></div>
+<div id="prog"><b></b></div>
+<div id="flash"></div>
+<script>
+const D = window.__DATA__;
+const $ = id => document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const eio=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const back=x=>{x=clamp(x);const c=1.5;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+let seed=D.seed||7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+/* ---------- background ---------- */
+const STARS=[]; for(let i=0;i<70;i++){const e=document.createElement("div");e.className="star";const s=1+rnd()*2.6;
+  Object.assign(e.style,{left:rnd()*1080+"px",top:rnd()*1050+"px",width:s+"px",height:s+"px"});$("stars").appendChild(e);STARS.push([e,rnd()*6,0.25+rnd()*0.55]);}
+const MOTES=[]; for(let i=0;i<34;i++){const e=document.createElement("div");e.className="mote";const s=2+rnd()*5;
+  Object.assign(e.style,{width:s+"px",height:s+"px"});$("dust").appendChild(e);MOTES.push([e,rnd()*1080,rnd()*1920,10+rnd()*26,rnd()*6,0.15+rnd()*0.5]);}
+
+const NS="http://www.w3.org/2000/svg";
+function svg(parent, tag, attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+const sc=$("scene");
+const defs=svg(sc,"defs",{});
+defs.innerHTML=`
+ <radialGradient id="glow" cx="50%" cy="78%" r="60%"><stop offset="0" stop-color="#ffe2a6" stop-opacity=".95"/><stop offset=".35" stop-color="#e9b766" stop-opacity=".55"/><stop offset="1" stop-color="#e9b766" stop-opacity="0"/></radialGradient>
+ <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c784" stop-opacity=".0"/><stop offset="1" stop-color="#e9c784" stop-opacity=".35"/></linearGradient>
+ <radialGradient id="spill" cx="50%" cy="0%" r="70%"><stop offset="0" stop-color="#ffd995" stop-opacity=".45"/><stop offset="1" stop-color="#ffd995" stop-opacity="0"/></radialGradient>
+ <radialGradient id="lg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe6b0"/><stop offset=".6" stop-color="#f0b860"/><stop offset="1" stop-color="#b57a2a"/></radialGradient>
+ <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffd58a" stop-opacity=".5"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>
+ <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a8"/><stop offset="1" stop-color="#e2a24c"/></linearGradient>`;
+
+const HORIZON=1610;
+const floorG=svg(sc,"g",{id:"floorG"});
+svg(floorG,"rect",{x:0,y:HORIZON,width:1080,height:1920-HORIZON,fill:"#04100b"});
+defs.innerHTML+=`<clipPath id="below"><rect x="0" y="${HORIZON}" width="1080" height="${1920-HORIZON}"/></clipPath>`;
+svg(floorG,"ellipse",{cx:540,cy:HORIZON,rx:560,ry:240,fill:"url(#spill)","clip-path":"url(#below)"});
+for(let i=-9;i<=9;i++){svg(floorG,"line",{x1:540+i*14,y1:HORIZON,x2:540+i*190,y2:1920,stroke:"#e9c784","stroke-opacity":.22,"stroke-width":1.4});}
+for(let j=1;j<=9;j++){const y=HORIZON+(1920-HORIZON)*Math.pow(j/9,1.9);svg(floorG,"line",{x1:0,y1:y,x2:1080,y2:y,stroke:"#e9c784","stroke-opacity":.08+.14*j/9,"stroke-width":1.2});}
+
+/* pointed (Ottoman) arch */
+function archPath(cx,base,w,spring,peak){const l=cx-w/2,r=cx+w/2;const k=w*0.55;
+  return `M${l},${base} L${l},${spring} C${l},${spring-k*0.62} ${cx-w*0.12},${peak+w*0.18} ${cx},${peak} C${cx+w*0.12},${peak+w*0.18} ${r},${spring-k*0.62} ${r},${spring} L${r},${base} Z`;}
+const archG=svg(sc,"g",{id:"archG"});
+svg(archG,"ellipse",{cx:540,cy:1470,rx:400,ry:330,fill:"url(#halo)",id:"archHalo"});
+svg(archG,"path",{d:archPath(540,HORIZON,300,1370,1120),fill:"url(#glow)"});
+svg(archG,"path",{d:archPath(540,HORIZON,300,1370,1120),fill:"none",stroke:"#e9c784","stroke-width":4,"stroke-opacity":.9});
+svg(archG,"path",{d:archPath(540,HORIZON,356,1360,1075),fill:"none",stroke:"#e9c784","stroke-width":2,"stroke-opacity":.45});
+/* light rays from the door */
+const rays=svg(archG,"g",{id:"rays",opacity:.0});
+for(let i=0;i<7;i++){const a=-0.55+i*0.183;svg(rays,"path",{d:`M540,1560 L${540+Math.sin(a-0.04)*1300},${1560-Math.cos(a-0.04)*1300} L${540+Math.sin(a+0.04)*1300},${1560-Math.cos(a+0.04)*1300} Z`,fill:"#ffe1a0","fill-opacity":.05});}
+
+/* mosque silhouette (dua reels) */
+const mosque=svg(sc,"g",{id:"mosque",opacity:0,transform:"translate(0,52)"});
+mosque.innerHTML=`
+ <path fill="#030c08" d="M0,1640 L0,1560 L160,1560 L160,1520 C160,1470 230,1440 270,1440 C310,1440 380,1470 380,1520 L380,1560 L400,1560 L400,1470
+   C400,1360 470,1290 540,1270 C610,1290 680,1360 680,1470 L680,1560 L700,1560 L700,1520 C700,1470 770,1440 810,1440 C850,1440 920,1470 920,1520 L920,1560 L1080,1560 L1080,1640 Z"/>
+ <path fill="#030c08" d="M120,1560 L120,1260 L114,1250 L124,1150 L129,1080 L134,1150 L144,1250 L138,1260 L138,1560 Z M942,1560 L942,1260 L936,1250 L946,1150 L951,1080 L956,1150 L966,1250 L960,1260 L960,1560 Z"/>
+ <rect x="533" y="1235" width="14" height="40" fill="#030c08"/><circle cx="540" cy="1230" r="9" fill="#030c08"/>
+ <g fill="url(#win)" opacity=".9"><path d="M500,1560 L500,1500 C500,1480 520,1470 540,1462 C560,1470 580,1480 580,1500 L580,1560 Z"/>
+ <rect x="440" y="1480" width="22" height="44" rx="11"/><rect x="618" y="1480" width="22" height="44" rx="11"/>
+ <rect x="240" y="1510" width="18" height="34" rx="9"/><rect x="282" y="1510" width="18" height="34" rx="9"/><rect x="780" y="1510" width="18" height="34" rx="9"/><rect x="822" y="1510" width="18" height="34" rx="9"/></g>`;
+
+/* hanging lanterns */
+const LANTERNS=[[170,330,1.0],[910,250,0.9],[540,150,0.75]];
+const lg=$("lanterns"); const Ls=[];
+LANTERNS.forEach(([x,len,s],i)=>{
+  const g=svg(lg,"g",{});
+  svg(g,"line",{x1:x,y1:0,x2:x,y2:len,stroke:"#c9a467","stroke-width":2,"stroke-opacity":.7});
+  const b=svg(g,"g",{transform:`translate(${x},${len}) scale(${s})`});
+  b.innerHTML=`<circle cx="0" cy="70" r="120" fill="url(#halo)"/>
+   <path d="M-10,0 L10,0 L16,14 L-16,14 Z" fill="#b8925a"/>
+   <path d="M-34,26 Q0,4 34,26 L30,34 L-30,34 Z" fill="#c9a467"/>
+   <path d="M-28,34 L28,34 L36,96 L22,128 L-22,128 L-36,96 Z" fill="url(#lg)" stroke="#c9a467" stroke-width="3"/>
+   <path d="M-12,34 L-14,128 M12,34 L14,128 M-32,96 L32,96" stroke="#9c7640" stroke-width="2.5" fill="none" opacity=".8"/>
+   <path d="M-22,128 L22,128 L10,146 L-10,146 Z" fill="#c9a467"/><circle cx="0" cy="156" r="6" fill="#c9a467"/>`;
+  Ls.push([g,x,i*1.7]);
+});
+
+
+/* ---------- cards ---------- */
+const ICONS={
+ comment:'<path d="M12 3C6.5 3 2 6.6 2 11c0 2.2 1.1 4.2 2.9 5.6L4 21l4.6-2.3c1.1.3 2.2.4 3.4.4 5.5 0 10-3.6 10-8S17.5 3 12 3z" fill="none" stroke="#e9c784" stroke-width="1.6" stroke-linejoin="round"/>',
+ share:'<path d="M21 3L3 10.5l7 2.5 2.5 7L21 3zM10 13l5-5" fill="none" stroke="#e9c784" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>',
+ save:'<path d="M6 3h12v18l-6-4.5L6 21V3z" fill="none" stroke="#e9c784" stroke-width="1.6" stroke-linejoin="round"/>'};
+const words=s=>s.split(/\s+/).filter(Boolean).map(w=>`<span class="w">${esc(w)}</span>`).join(" ");
+const CARDS=D.beats.map((b,i)=>{
+  const c=document.createElement("div"); c.className="card";
+  if(b.type==="hook") c.innerHTML=`<div class="k">KUR'AN KISSALARI</div><div class="ttl">${esc(D.title)}</div><div class="hook">${words(b.text)}</div>`;
+  else if(b.type==="quote") c.innerHTML=`<div class="qm">“</div><div class="qt">${words(b.text)}</div><div class="ref">${esc(b.ref)}</div>`;
+  else if(b.type==="lesson") c.innerHTML=`<div class="rule"></div><div class="lesson">${words(b.text)}</div>`;
+  else if(b.type==="cta") c.innerHTML=`<div class="ico"><svg viewBox="0 0 24 24">${ICONS[b.icon]||ICONS.comment}</svg></div><div class="ctaT">${esc(b.text)}</div><div class="ctaS">${esc(b.small||"")}</div>`;
+  else c.innerHTML=`<div class="line">${words(b.text)}</div>`;
+  $("cards").appendChild(c); return c;
+});
+$("shot").src=D.app.img; $("endLine").textContent=D.app.line;
+function fitCard(c){ const t=c.querySelector(".hook,.line,.qt,.lesson"); if(!t) return;
+  let s=parseFloat(getComputedStyle(t).fontSize); while(c.offsetHeight>900 && s>36){ s-=4; t.style.fontSize=s+"px"; } }
+window.layout=function(){
+  CARDS.forEach(c=>{ fitCard(c); const h=c.offsetHeight; c.style.top=Math.round(700-h/2)+"px"; });
+  window.DURATION=D.duration; return D.duration; };
+
+window.render=function(t){
+  const total=D.duration, endStart=D.endStart;
+  $("world").style.transform=`scale(${1.04+0.05*Math.sin(t/total*Math.PI)}) translateY(${-t*1.0}px)`;
+  STARS.forEach(([e,p,a])=>{e.style.opacity=a*(0.55+0.45*Math.sin(t*1.3+p));});
+  MOTES.forEach(([e,x,y,sp,p,a])=>{const yy=((y - t*sp) % 1920 + 1920)%1920; e.style.left=(x+Math.sin(t*0.6+p)*26)+"px"; e.style.top=yy+"px"; e.style.opacity=a*(0.6+0.4*Math.sin(t*2+p));});
+  Ls.forEach(([g,x,p])=>{g.setAttribute("transform",`rotate(${Math.sin(t*0.9+p)*2.2} ${x} 0)`);});
+  const endK=eo((t-endStart)/0.9), alt=(D.seed||0)%2===1;
+  $("archG").setAttribute("opacity",(alt?0:1)*(1-endK)*(0.35+0.65*eo(t/1.6)));
+  $("mosque").setAttribute("opacity",(alt?1:0)*(1-endK)*eo(t/1.6));
+  $("rays").setAttribute("opacity",0.5+0.15*Math.sin(t*1.4));
+  $("floorG").setAttribute("opacity",1-endK*0.8);
+  $("archHalo").setAttribute("opacity",0.75+0.25*Math.sin(t*2.1));
+  $("lanterns").style.opacity=1-endK*0.6;
+  D.beats.forEach((b,i)=>{
+    const c=CARDS[i], a=b.start-0.08, e=(i+1<D.beats.length?D.beats[i+1].start:endStart)-0.42;
+    const vin=eo((t-a)/0.4), vout=1-eio((t-e)/0.32); const v=Math.min(vin,vout);
+    c.style.opacity=v; c.style.transform=`translateY(${(1-vin)*30-(1-vout)*30}px)`; c.style.filter=v<1?`blur(${(1-v)*6}px)`:"none";
+    const W=c.querySelectorAll(".w"); const span=Math.max(0.4,(b.end-b.start)*0.85), per=span/Math.max(1,W.length);
+    W.forEach((w,k)=>{const q=eo((t-b.start-k*per)/0.35); w.style.opacity=0.12+0.88*q;});
+    const ico=c.querySelector(".ico"); if(ico) ico.style.transform=`scale(${0.6+0.4*back((t-b.start)/0.6)})`;
+  });
+  const a5=endStart;
+  $("s5").style.opacity=eo((t-a5)/0.5);
+  const kp=eo((t-a5-0.2)/1.1); $("phone").style.transform=`translateY(${(1-kp)*700}px) rotate(${(1-kp)*-6}deg)`;
+  const kh=back((t-a5)/0.7); $("endHead").style.opacity=eo((t-a5)/0.4); $("endHead").style.transform=`scale(${0.85+0.15*kh})`;
+  const kg=back((t-a5-1.0)/0.6); $("badge").style.opacity=eo((t-a5-1.0)/0.3); $("badge").style.transform=`translateX(-50%) scale(${0.6+0.4*kg})`;
+  $("prog").querySelector("b").style.width=(clamp(t/total)*100)+"%";
+  $("bar").style.opacity=eo(t/0.6);
+  document.body.style.filter=`brightness(${clamp(t/0.35)*(1-clamp((t-(total-0.5))/0.5))})`;
+};
+window.READY=document.fonts.ready.then(()=>{layout(); render(0); return window.DURATION;});
+</script>
+</body>
+</html>
