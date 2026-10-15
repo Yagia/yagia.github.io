@@ -471,7 +471,7 @@ def esma_post(day):
 # ---------------------------------------------------------------- Kur'an kıssaları (one narrated story a day)
 import kissa_content as KC
 
-KISSA_EPOCH = dt.date(2026, 10, 16)
+KISSA_EPOCH = dt.date(2026, 10, 15)
 KISSA_STYLE = ("Narrate the following Turkish text as a deep, warm male storyteller telling a moving story from the Quran "
                "in a short film. Native Turkish pronunciation. Speak slowly and with feeling: build tension, emphasise key words, "
                "make a clear pause between paragraphs, and read the quoted verses softly and reverently.")
