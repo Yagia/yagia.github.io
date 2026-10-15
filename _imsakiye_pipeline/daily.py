@@ -644,7 +644,7 @@ GREETINGS = {
 }
 DATIVE = {"regaib": "Regaib Kandili'ne", "mirac": "Miraç Kandili'ne", "berat": "Berat Kandili'ne", "mevlid": "Mevlid Kandili'ne",
           "kadir": "Kadir Gecesi'ne", "ramadanBegins": "Ramazan'a"}
-TAGS = "#imsakiye #hayırlıcumalar #kandil #bayram #ramazan #dua"
+TAGS = "#imsakiye #kandil #bayram #ramazan #dua"
 
 
 def quran_duas():
@@ -706,6 +706,8 @@ def main():
         try:
             r = fn(day)
             url, caption = (r, None) if isinstance(r, str) else r
+            if day.weekday() != 4 and re.search(r"cuma", f"{url} {caption or ''}", re.I):
+                raise SystemExit("Friday content on a non-Friday")        # Cuma content only ever goes out on Fridays
             manifest["items"].append({"slot": slot, "kind": kind, "url": url, "caption": caption})
         except BaseException as e:      # one failed piece must not stop the others
             print(f"{slot}: skipped ({e})")
