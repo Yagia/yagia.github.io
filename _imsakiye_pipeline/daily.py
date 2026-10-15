@@ -481,9 +481,25 @@ def kissa_say(segs):
     return "\n\n".join(speakable(p) for p in paras)
 
 
+KISSA_VOICE = "JBFqnCBsd6RMkjVDRZzb"      # ElevenLabs voice id (eleven_multilingual_v2)
+
+
 def kissa_vo_name(k):
     import hashlib
-    return "kissa-" + k["id"] + "-" + hashlib.sha1((KISSA_STYLE + kissa_say(kissa_segments(k))).encode()).hexdigest()[:10]
+    return "kissa-" + k["id"] + "-" + hashlib.sha1((KISSA_VOICE + kissa_say(kissa_segments(k))).encode()).hexdigest()[:10]
+
+
+def times_from_alignment(path, text):
+    """Paragraph start/end times from ElevenLabs character timings (text must be what was synthesised)."""
+    al = json.loads(Path(path).read_text())
+    chars, st, en = al["characters"], al["character_start_times_seconds"], al["character_end_times_seconds"]
+    if "".join(chars) != text:
+        return None
+    out, pos = [], 0
+    for para in text.split("\n\n"):
+        i = text.index(para, pos); j = i + len(para) - 1; pos = j + 1
+        out.append((st[i], en[j]))
+    return out
 
 
 def split_by_pauses(wav, texts):
@@ -535,7 +551,27 @@ def kissa_reel(day):
     tmp = HERE / "vo_tmp"; tmp.mkdir(exist_ok=True)
     wav = tmp / "kissa.wav"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-ar", "48000", "-ac", "1", str(wav)], check=True)
-    times = split_by_pauses(wav, [sp for *_, sp in segs])
+    js = src.with_suffix(".json")
+    times = times_from_alignment(js, kissa_say(segs)) if js.exists() else None
+    if times:                      # breathe: longer pauses between paragraphs than the voice leaves on its own
+        import wave, numpy as np
+        w = wave.open(str(wav)); sr = w.getframerate()
+        x = np.frombuffer(w.readframes(w.getnframes()), np.int16)
+        parts, new, t = [], [], 0.0
+        for i, (a, b) in enumerate(times):
+            cut0 = 0 if i == 0 else int((times[i-1][1] + a) / 2 * sr)
+            cut1 = len(x) if i == len(times) - 1 else int((b + times[i+1][0]) / 2 * sr)
+            chunk = x[cut0:cut1]
+            new.append((t + (a - cut0 / sr), t + (b - cut0 / sr)))
+            parts.append(chunk); t += len(chunk) / sr
+            if i < len(times) - 1:
+                nxt = segs[i + 1][0]
+                gap = 0.75 if i == 0 else 0.7 if nxt in ("lesson", "cta") else 0.45 if nxt == "quote" else 0.3
+                parts.append(np.zeros(int(gap * sr), np.int16)); t += gap
+        ww = wave.open(str(wav), "wb"); ww.setnchannels(1); ww.setsampwidth(2); ww.setframerate(sr)
+        ww.writeframes(np.concatenate(parts).tobytes()); ww.close()
+        times = new
+    times = times or split_by_pauses(wav, [sp for *_, sp in segs])
     lead = 0.6
     beats = []
     for (typ, text, ref, _), (a, b) in zip(segs, times):
