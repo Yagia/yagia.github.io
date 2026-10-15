@@ -299,8 +299,39 @@ SPOKEN_CTA = {"amin": "Yorumlara âmin yaz.", "share": "İhtiyacı olan birine g
               "salavat": "Yorumlara bir salavat bırak.", "hamd": "Yorumlara bir elhamdülillah bırak."}
 
 
+# The voice mispronounces circumflex vowels (âmin -> "emin") and some loanwords, so the spoken text is
+# normalised; on-screen text and captions keep the proper spelling. Checked with Azure pronunciation assessment.
+SAY_FIX = {r"\bwidget": "vicit", r"\bWidget": "Vicit", r"\bmeal\b": "meali", r"\bMeal\b": "Meali"}
+
+
+SAY_ABBR = {"(s.a.v.)": "sallallahu aleyhi ve sellem", "Hz.": "Hazreti", "Âl-i": "Ali", "Al-i": "Ali"}
+_ONES = ["", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"]
+_TENS = ["", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"]
+_ORD = {"bir": "birinci", "iki": "ikinci", "üç": "üçüncü", "dört": "dördüncü", "beş": "beşinci", "altı": "altıncı",
+        "yedi": "yedinci", "sekiz": "sekizinci", "dokuz": "dokuzuncu", "on": "onuncu", "yirmi": "yirminci",
+        "otuz": "otuzuncu", "kırk": "kırkıncı", "elli": "ellinci", "altmış": "altmışıncı", "yetmiş": "yetmişinci",
+        "seksen": "sekseninci", "doksan": "doksanıncı", "yüz": "yüzüncü"}
+
+
+def tr_number(n, ordinal=False):
+    """Turkish words for 1–999 (ordinal with ordinal=True): 128 -> yüz yirmi sekiz(inci)."""
+    h, r = divmod(n, 100)
+    words = ([] if h == 0 else (["yüz"] if h == 1 else [_ONES[h], "yüz"])) + ([_TENS[r // 10]] if r >= 10 else []) + ([_ONES[r % 10]] if r % 10 else [])
+    if ordinal:
+        words[-1] = _ORD[words[-1]]
+    return " ".join(words)
+
+
 def speakable(t):
     t = t.replace("\n", " ").replace("…", "").replace("“", "").replace("”", "").replace('"', "")
+    for k, v in SAY_ABBR.items():
+        t = t.replace(k, v)
+    t = t.translate(str.maketrans("âîûÂÎÛ", "aiuAIU"))
+    for k, v in SAY_FIX.items():
+        t = re.sub(k, v, t)
+    t = re.sub(r"(\d+)-(\d+)\. ", lambda m: f"{tr_number(int(m[1]))} ve {tr_number(int(m[2]), True)} ", t)
+    t = re.sub(r"(\d+)\. ", lambda m: f"{tr_number(int(m[1]), True)} ", t)
+    t = re.sub(r"\d+", lambda m: tr_number(int(m[0])), t)
     return re.sub(r"\s+", " ", t).strip()
 
 
@@ -311,12 +342,12 @@ def vo_name(text):
 
 def say_ayet(e, sura, a, line):
     return {"s1": speakable(e["hook"]), "s2": speakable(f"{sura} Sûresi, {a}. ayet. {e['ex']}"), "s3": speakable(e["note"]),
-            "s4": SPOKEN_CTA.get(e["cta"]) or speakable(e["cta"]), "s5": f"İmsakiye. {line}. App Store'da ücretsiz."}
+            "s4": SPOKEN_CTA.get(e["cta"]) or speakable(e["cta"]), "s5": speakable(f"İmsakiye. {line}. App Store'da ücretsiz.")}
 
 
 def say_dua(e, d, line):
     return {"s1": speakable(e["hook"]), "s2": speakable(d["tr"]), "s3": speakable(e["note"]),
-            "s4": SPOKEN_CTA["amin"], "s5": f"İmsakiye. {line}. App Store'da ücretsiz."}
+            "s4": SPOKEN_CTA["amin"], "s5": speakable(f"İmsakiye. {line}. App Store'da ücretsiz.")}
 
 
 def vo_clips(say):

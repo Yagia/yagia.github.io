@@ -156,7 +156,7 @@ AYET = [
     dict(ref="39:36", hook="Kimsen yok mu\nsanıyorsun?", ex="Allah kuluna kafi değil midir?",
          hl="kafi değil midir?", note="O yeter.", cta="Yorumlara\n“Allah bana yeter” yaz."),
     dict(ref="57:23", hook="Kaybettiklerine mi\nüzülüyorsun?", ex="(Allah bunu) elinizden çıkana üzülmeyesiniz ve Allah'ın size verdiği nimetlerle şımarmayasınız diye açıklamaktadır.",
-         hl="elinizden çıkana üzülmeyesiniz", note="Gidene yas,\ngelene kibir yok.", cta="save"),
+         hl="elinizden çıkana üzülmeyesiniz", note="Gidene üzülme,\ngelene şımarma.", cta="save"),
     dict(ref="2:214", hook="“Allah'ın yardımı ne zaman?”\ndiye soranlar oldu.", ex="nihayet Peygamber ve beraberindeki müminler: Allah'ın yardımı ne zaman! dediler. Bilesiniz ki Allah'ın yardımı yakındır.",
          hl="Allah'ın yardımı yakındır.", note="Cevap hep aynı:\nyakın.", cta="amin"),
     dict(ref="2:156", hook="Bir kayıp yaşadığında\nne dersin?", ex="O sabredenler, kendilerine bir bela geldiği zaman: Biz Allah'ın kullarıyız ve biz O'na döneceğiz, derler.",
@@ -237,7 +237,7 @@ CUMA = [
 
 # Duas: id from the app's dua.json; `who` is the kicker, `hook` sets the scene.
 DUA = [
-    dict(id=10, who="HZ. YÛNUS'UN DUASI", hook="Hz. Yûnus,\nkaranlıklar içinde\nböyle dua etti.", note="Sıkıştığın her an\nbu duayı hatırla."),
+    dict(id=10, who="HZ. YÛNUS'UN DUASI", hook="Hz. Yûnus,\nkaranlıklar içinde\nböyle dua etti.", note="Daraldığın her an\nbu duayı hatırla."),
     dict(id=5, who="HZ. MÛSÂ'NIN DUASI", hook="Hz. Mûsâ, Firavun'a\ngitmeden önce\nbu duayı etti.", note="Zor bir işe başlamadan önce\noku."),
     dict(id=1, who="RABBENÂ ÂTİNÂ", hook="Namazın son oturuşunda\nokuduğumuz dua.", note="Dünya ve ahiret için\ntek cümlelik bir dua."),
     dict(id=22, who="HZ. ÂDEM İLE HZ. HAVVA", hook="Hz. Âdem ile Hz. Havva'nın\ntövbe duası.", note="Hata insana,\ntövbe de insana yakışır."),
