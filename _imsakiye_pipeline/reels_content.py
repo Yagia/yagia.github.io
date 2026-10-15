@@ -184,7 +184,7 @@ AYET = [
     dict(ref="3:159", hook="Sert sözler\nkimi kazandırdı?", ex="Şayet sen kaba, katı yürekli olsaydın, hiç şüphesiz, etrafından dağılıp giderlerdi.",
          hl="etrafından dağılıp giderlerdi", note="Yumuşak söz,\nkalpleri bir arada tutar.", cta="share"),
     dict(ref="4:86", hook="Selamı nasıl\nalıyorsun?", ex="Bir selam ile selamlandığınız zaman siz de ondan daha güzeli ile selamlayın; yahut aynı ile karşılık verin.",
-         hl="daha güzeli ile", note="Bugün selamı yay.", cta="Yorumlara bir\n“Selâmün aleyküm” bırak."),
+         hl="daha güzeli ile", note="Bugün selamı\nyaygınlaştır.", cta="Yorumlara bir\n“Selâmün aleyküm” bırak."),
     dict(ref="49:13", hook="Allah katında\nen değerli kim?", ex="Muhakkak ki Allah yanında en değerli olanınız, O'ndan en çok korkanınızdır.",
          hl="en çok korkanınızdır", note="Değer; soyda, malda değil,\ntakvada.", cta="share"),
     dict(ref="24:35", hook="Karanlıkta yolunu\nmu kaybettin?", ex="Allah, göklerin ve yerin nurudur.",
