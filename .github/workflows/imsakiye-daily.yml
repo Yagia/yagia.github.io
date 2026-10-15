@@ -48,5 +48,5 @@ jobs:
           git add imsakiye
           git diff --cached --quiet && exit 0
           git commit -m "imsakiye: daily content $(TZ=Europe/Istanbul date +%F)"
-          git pull --rebase -q origin main
+          git pull --rebase -X theirs -q origin main   # newer render wins if an earlier run already pushed the same day's files
           git push -q origin HEAD:main
