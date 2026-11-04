@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 SITE = HERE.parent / "imsakiye"
 BASE_URL = "https://yagia.github.io/imsakiye"
 TZ = ZoneInfo("Europe/Istanbul")
+SEQ = {}          # series position per content type when content no longer goes out every day (set in main)
 CITIES = [("İstanbul", 9541, "Istanbul"), ("Ankara", 9206, "Ankara"), ("İzmir", 9560, "Izmir"), ("Antalya", 9225, "Antalya"),
           ("Samsun", 9819, "Samsun"), ("Erzurum", 9451, "Erzurum"), ("Diyarbakır", 9402, "Diyarbakir"), ("Adana", 9146, "Adana")]
 MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
@@ -168,7 +169,7 @@ def verse_reel(day):
 
 def hadis_post(day):
     items = json.loads((HERE / "hadis.json").read_text())
-    h = items[day.toordinal() % len(items)]
+    h = items[SEQ.get("hadis", day.toordinal()) % len(items)]
     src = NARRATORS.get(h["source"], h["source"])
     still("post.html", {"text": h["tr"], "source": f"— {src}"}, SITE / "post" / f"{day.isoformat()}.jpg", (1080, 1350))
     caption = (f"Günün Hadisi\n\n“{h['tr']}”\n— {src}\n\n💚 Kaydet, paylaş, hatırlat.\n\n"
@@ -231,7 +232,7 @@ def ayet_entry(day, which):
     if which == 0 and day.weekday() == 4:
         pool, start = RC.CUMA, (n // 7) % len(RC.CUMA)
     else:
-        pool, start = RC.AYET, (n + n // 2 + which) % len(RC.AYET)
+        pool, start = RC.AYET, (SEQ["ayet"] if which == 0 and "ayet" in SEQ else n + n // 2 + which) % len(RC.AYET)
     for k in range(len(pool)):                          # an entry whose excerpt no longer matches is skipped
         e = pool[(start + k) % len(pool)]
         tr, ar = quran_text(e["ref"])
@@ -410,7 +411,7 @@ def ayet_reel(day, which=0):
 
 def dua_reel(day):
     n = (day - REEL_EPOCH).days
-    e = RC.DUA[(n // 2) % len(RC.DUA)]
+    e = RC.DUA[(SEQ["dua"] if "dua" in SEQ else n // 2) % len(RC.DUA)]
     d = next(x for x in json.loads((HERE / "dua.json").read_text()) if x["id"] == e["id"])
     s, a = re.search(r"\b(\d+):([\d-]+)", d["source"]).groups()
     sura = SURAHS[int(s) - 1]
@@ -563,7 +564,7 @@ def split_by_pauses(wav, texts):
 
 
 def kissa_reel(day):
-    n = (day - KISSA_EPOCH).days
+    n = SEQ.get("kissa", (day - KISSA_EPOCH).days)
     k = KC.KISSA[n % len(KC.KISSA)]
     segs = kissa_segments(k)
     for b in k["beats"]:                           # every quote must match the translation exactly
@@ -698,6 +699,68 @@ def overrides(day):
     return out
 
 
+# ---------------------------------------------------------------- one feed share a day (from 2026-11-05)
+# Every morning one piece goes to the feed (plus the prayer-times story). Priority: occasion card > app ad
+# (every 14 days) > the day before a kandil / Ramadan milestones countdown > Friday card > weekly rotation.
+ROT_EPOCH = dt.date(2026, 11, 5)
+AD_EPOCH, AD_EVERY = dt.date(2026, 11, 5), 14
+AD_URL = f"{BASE_URL}/reels/reklam4.mp4"
+AD_CAPTION = ("Namaz vaktini son anda fark etmeye son 🕌\n\n"
+              "İmsakiye ile sıradaki vakte kalan süre tek bakışta: 30 günlük imsakiye, kıble pusulası, meal, tefsir ve sesli dinlemeyle "
+              "Kur'an-ı Kerim, hatim planı ve namaz takibi tek uygulamada.\n\n"
+              "📲 App Store'da ücretsiz. Profildeki bağlantıdan indir.\n\n"
+              "#imsakiye #namazvakitleri #kuranıkerim #kıble #hatim #namaz #ramazan")
+ROTATION = {0: "kissa", 1: "hadis", 2: "ayet", 3: "kissa", 4: "cuma", 5: "dua", 6: "hadis"}     # Monday = 0
+SEQ_START = {"kissa": 21, "hadis": 25, "ayet": 31, "dua": 11}    # continue each series where daily posting left it
+
+
+def is_ad_day(day):
+    return day >= AD_EPOCH and (day - AD_EPOCH).days % AD_EVERY == 0
+
+
+def countdown_due(day):
+    nxt = religious.next_after(day, set(DATIVE))
+    if not nxt:
+        return False
+    k, when = nxt
+    left = (when - day).days
+    return left in (30, 14, 7, 3, 1) if k == "ramadanBegins" else left == 1
+
+
+def pick(day):
+    """What goes to the feed on `day`: occasion | ad | countdown | cuma | kissa | hadis | ayet | dua."""
+    if any(k in GREETINGS for k, _ in religious.on(day)):
+        return "occasion"
+    if is_ad_day(day):
+        return "ad"
+    if countdown_due(day):
+        return "countdown"
+    return ROTATION[day.weekday()]
+
+
+def seq_of(day, kind):
+    n = sum(1 for k in range((day - ROT_EPOCH).days) if pick(ROT_EPOCH + dt.timedelta(k)) == kind)
+    return SEQ_START.get(kind, 0) + n
+
+
+def cover_for(url):
+    """Cover = a frame from the start of the reel: the last frame before the first scene change (hook fully on screen)."""
+    import numpy as np
+    mp4 = SITE / url.split("/imsakiye/", 1)[1]
+    W, H, fps = 108, 192, 10
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-t", "10", "-i", str(mp4), "-vf", f"fps={fps},scale={W}:{H},format=gray",
+                          "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    fr = np.frombuffer(raw, np.uint8).reshape(-1, H, W).astype(float)
+    diff = [np.abs(fr[i] - fr[i - 1]).mean() for i in range(1, len(fr))]
+    t = 2.0
+    for i, d in enumerate(diff):
+        if (i + 1) / fps >= 1.0 and d >= 1.4:
+            t = max(0.8, (i + 1) / fps - 0.4); break
+    dst = mp4.with_name(mp4.stem + "-cover.jpg")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{t:.2f}", "-i", str(mp4), "-frames:v", "1", "-q:v", "2", str(dst)], check=True)
+    return url.rsplit("/", 1)[0] + "/" + dst.name
+
+
 def main():
     day = dt.datetime.now(TZ).date() if len(sys.argv) < 2 else dt.date.fromisoformat(sys.argv[1])
     manifest = {"date": day.isoformat(), "items": []}
@@ -708,9 +771,14 @@ def main():
             url, caption = (r, None) if isinstance(r, str) else r
             if day.weekday() != 4 and re.search(r"cuma", f"{url} {caption or ''}", re.I):
                 raise SystemExit("Friday content on a non-Friday")        # Cuma content only ever goes out on Fridays
-            manifest["items"].append({"slot": slot, "kind": kind, "url": url, "caption": caption})
+            item = {"slot": slot, "kind": kind, "url": url, "caption": caption}
+            if kind == "reel":
+                item["cover"] = cover_for(url)
+            manifest["items"].append(item)
+            return True
         except BaseException as e:      # one failed piece must not stop the others
             print(f"{slot}: skipped ({e})")
+            return False
 
     special = {}
     try:
@@ -718,20 +786,28 @@ def main():
     except BaseException as e:
         print(f"special: skipped ({e})")
     add("morning_story", "story_image", story)
-    add("morning_reel", "reel", ayet_reel)
-    add("noon_post", "image", (lambda d: special["noon_post"]) if "noon_post" in special else hadis_post)
-    add("evening_story", "story_image", (lambda d: special["evening_story"]) if "evening_story" in special else esma_story)
-    if "evening_post" in special:
-        add("evening_post", "image", lambda d: special["evening_post"])
-    elif "evening_story" not in special:                        # occasion days already have the noon card
-        add("evening_post", "image", esma_post)
-    add("evening_reel", "reel", evening_reel)
-    add("kissa_reel", "reel", kissa_reel)
+    what = pick(day)
+    if what in SEQ_START:
+        SEQ[what] = seq_of(day, what)
+    choices = {
+        "occasion": ("image", lambda d: special["noon_post"]),
+        "cuma": ("image", lambda d: special["noon_post"]),
+        "countdown": ("image", lambda d: special["evening_post"]),
+        "ad": ("reel", lambda d: (AD_URL, AD_CAPTION)),
+        "kissa": ("reel", kissa_reel),
+        "ayet": ("reel", ayet_reel),
+        "dua": ("reel", dua_reel),
+        "hadis": ("image", hadis_post),
+    }
+    kind, fn = choices[what]
+    print(f"main: {what}" + (f" #{SEQ[what]}" if what in SEQ else ""))
+    if not add("main", kind, fn):
+        SEQ["hadis"] = seq_of(day, "hadis")
+        add("main", "image", hadis_post)                       # fallback so the morning slot is never empty
     out = SITE / "daily" / f"{day.isoformat()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
     print(json.dumps(manifest, ensure_ascii=False, indent=1))
-
 
 if __name__ == "__main__":
     main()
