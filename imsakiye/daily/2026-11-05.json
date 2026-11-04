@@ -1,0 +1,18 @@
+{
+ "date": "2026-11-05",
+ "items": [
+  {
+   "slot": "morning_story",
+   "kind": "story_image",
+   "url": "https://yagia.github.io/imsakiye/story/2026-11-05.jpg",
+   "caption": null
+  },
+  {
+   "slot": "main",
+   "kind": "reel",
+   "url": "https://yagia.github.io/imsakiye/reels/reklam4.mp4",
+   "caption": "Namaz vaktini son anda fark etmeye son 🕌\n\nİmsakiye ile sıradaki vakte kalan süre tek bakışta: 30 günlük imsakiye, kıble pusulası, meal, tefsir ve sesli dinlemeyle Kur'an-ı Kerim, hatim planı ve namaz takibi tek uygulamada.\n\n📲 App Store'da ücretsiz. Profildeki bağlantıdan indir.\n\n#imsakiye #namazvakitleri #kuranıkerim #kıble #hatim #namaz #ramazan",
+   "cover": "https://yagia.github.io/imsakiye/reels/reklam4-cover.jpg"
+  }
+ ]
+}
