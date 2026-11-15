@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İmsakiye – Gizlilik Politikası</title>
+<meta name="description" content="İmsakiye uygulamasının iPhone ve Android için gizlilik politikası.">
+<link rel="alternate" hreflang="tr" href="https://yagia.github.io/imsakiye/privacy/tr/">
+<link rel="alternate" hreflang="en" href="https://yagia.github.io/imsakiye/privacy/">
+<style>
+  :root { color-scheme: light dark; --text: #1a1a1a; --muted: #555; --bg: #ffffff; --accent: #15764c; --rule: #dde5e1; }
+  @media (prefers-color-scheme: dark) { :root { --text: #eceef0; --muted: #a4aab1; --bg: #0a0c0e; --accent: #86efac; --rule: #2a2f34; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.55 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.7rem; margin: 0.4em 0 0.2em; }
+  h2 { font-size: 1.2rem; margin: 2em 0 0.4em; padding-top: 0.6em; border-top: 1px solid var(--rule); }
+  a { color: var(--accent); }
+  .meta, .lang { color: var(--muted); font-size: 0.95rem; }
+</style>
+</head>
+<body>
+<main>
+<p class="lang"><a href="../" hreflang="en" lang="en">English</a> · Türkçe</p>
+<h1>Gizlilik Politikası</h1>
+<p class="meta">iPhone ve iPad (App Store, ID 1508874827) ile Android (Google Play, com.yagia.islam) için İmsakiye (başka
+dillerde “Prayer Times”, “مواقيت الصلاة”, “Gebetszeiten” … adıyla).<br>Son güncelleme: 16 Kasım 2026</p>
+
+<h2 id="s1">1. Biz kimiz, kısaca</h2>
+<p>Uygulamayı Türkiye'de bireysel geliştirici Yağız Akdeniz yapar (“biz”). İletişim:
+<a href="mailto:yagizakdeniz0@gmail.com">yagizakdeniz0@gmail.com</a>.</p>
+<p>Hesap açmanız gerekmez. Verilerinizi satmayız. Kendimize ait bir sunucumuz yoktur: telefonunuzdan çıkan her şey yalnızca
+bir özelliğin çalışması, reklam gösterilmesi ya da kullanımın ve çökmelerin sayılması için aşağıda adı geçen hizmetlere
+gider. Geri kalan her şey – ayarlarınız, kayıtlı konumlarınız, bildirimleriniz ve alarmlarınız – cihazınızda kalır.</p>
+<p>Bazı özellikler Android uygulamasında henüz yok: reklamlar, kullanım istatistikleri ve çökme raporları, Ortak Hatim,
+“Bir kahve ısmarla” satın alımı, yakındaki camiler ve Kur'an. Bu sayfa onları şimdiden anlatır ki geldiklerinde de doğru
+kalsın; her bölüm bir özelliğin bugün nerede olduğunu söyler.</p>
+
+<h2 id="s2">2. Konum</h2>
+<p>Konum isteğe bağlıdır: yeri her zaman elle seçebilir, izni istediğiniz zaman telefonunuzun ayarlarından geri
+alabilirsiniz. İzin verirseniz uygulama konumunuzu en yakın yeri ve o yerin vakit hesaplama yöntemini seçmek için kullanır.</p>
+<ul>
+  <li><strong>Namaz vakitleri.</strong> Türkiye'deki ve Diyanet İşleri Başkanlığı'nın (Diyanet) vakit verdiği diğer yerler
+  için uygulama konumunuzu değil, yalnızca yerin numarasını Diyanet'e (awqatsalah.diyanet.gov.tr,
+  namazvakitleri.diyanet.gov.tr) ya da Diyanet'in vakitlerini yayımlayan aynalara (ezanvakti.emushaf.net,
+  ezanvakti.imsakiyem.com) gönderir. Hesaplanan vakitler için konumunuzun (izin verdiğiniz gibi yaklaşık ya da kesin) veya
+  seçilen yerin koordinatlarını Aladhan'a (api.aladhan.com) gönderir; Aladhan ayın vakitlerini döndürür. 25 ülkenin
+  vakitleri telefonda hesaplanır ve hiçbir şey göndermez.</li>
+  <li><strong>Yerin adı.</strong> Telefon konumunuzu sistemin hizmetiyle bir yer adına çevirir: Android'de Google Play
+  hizmetleri, iPhone'da Apple'ın konum hizmeti.</li>
+  <li><strong>Yakındaki camiler</strong> (bugün iPhone'da, Android'de sonra): çevrenizdeki camileri bulmak için konumunuz
+  OpenStreetMap'in Overpass sunucularına (overpass-api.de, overpass.kumi.systems, overpass.openstreetmap.fr) gönderilir.</li>
+  <li><strong>Ne zaman.</strong> Android'de yalnızca uygulamayı kullanırken (arka planda konum yok). iPhone'da “Her Zaman”
+  iznini de verirseniz uygulama kapalıyken de konumunuzu izleyebilir; böylece vakitler ve bildirimler bulunduğunuz yere uyar.</li>
+  <li><strong>Reklamlar</strong> (3. bölüm) internet adresinizden yaklaşık bir konum çıkarabilir.</li>
+</ul>
+<p>Konumunuzun bir kopyasını tutmayız; sonuncusu yalnızca cihazınızda saklanır. Yukarıdaki hizmetler onu isteği yanıtlamak
+için alır; kendi sunucularında kendi politikaları geçerlidir.</p>
+
+<h2 id="s3">3. Cihaz ve diğer kimlikler (reklam, istatistik, Ortak Hatim)</h2>
+<ul>
+  <li><strong>Reklamlar</strong> (bugün iPhone'da, Android'de sonra): uygulama Google AdMob'dan banner ve uygulama açılış
+  reklamları gösterir. AdMob reklamları göstermek, sınırlamak, ölçmek ve dolandırıcılığı önlemek için cihazın reklam
+  kimliğini (iPhone'da yalnızca izlemeye izin verirseniz), internet adresinizi, reklam görüntüleme ve dokunmalarını ve tanılama
+  verilerini kullanabilir; Google bu verileri kendi politikasına göre kullanır. AEA, Birleşik Krallık ve İsviçre'de uygulama
+  önce Google'ın izin mesajını gösterir; seçiminiz cihazda saklanır ve Ayarlar → Gizlilik Seçenekleri'nden değiştirilebilir.
+  Reklam kimliğini telefonunuzun ayarlarından sıfırlayabilir veya silebilirsiniz.</li>
+  <li><strong>İstatistikler ve çökme raporları</strong> (bugün iPhone'da, Android'de sonra): Google Firebase uygulamaya bir
+  kurulum kimliği verir (4. ve 5. bölümler).</li>
+  <li><strong>Ortak Hatim</strong> (bugün iPhone'da, Android'de sonra): Firebase Anonim Kimlik Doğrulama uygulamaya adı, e-postası
+  ve şifresi olmayan rastgele bir kullanıcı kimliği verir (6. ve 7. bölümler).</li>
+</ul>
+
+<h2 id="s4">4. Uygulamanın nasıl kullanıldığı (kullanım istatistikleri)</h2>
+<p>Bugün iPhone'da, Android'de sonra: Google Firebase Analytics hangi ekranların açıldığını ve benzeri olayları cihaz modeli,
+sistem sürümü, dil ve ülkeyle birlikte kaydeder. Bunu hangi özelliklerin kullanıldığını görmek için kullanırız, sizi tanımak
+için asla. İzin gereken yerlerde (3. bölüm) istatistikler yalnızca izin adımından sonra ve seçiminize göre toplanır.
+Reklamlar reklam görüntüleme ve dokunmalarını kaydeder (3. bölüm).</p>
+
+<h2 id="s5">5. Çökme raporları ve tanılama</h2>
+<p>Bugün iPhone'da, Android'de sonra: uygulama çöktüğünde Google Firebase Crashlytics bir çökme raporu gönderir (uygulamanın
+neresinde olduğu, cihaz modeli, sistem sürümü, boş bellek ve benzerleri). Bunu yalnızca hataları düzeltmek için kullanırız.</p>
+
+<h2 id="s6">6. Ortak Hatim'deki takma adınız</h2>
+<p>Bugün iPhone'da, Android'de sonra. Ortak Hatim isteğe bağlıdır. Bir ortak hatim başlattığınızda ya da katıldığınızda
+yazdığınız takma ad Google Cloud Firestore'da saklanır ve grubun davet kodu ya da bağlantısı olan herkese, aldığınız
+cüzlerin yanında gösterilir.</p>
+
+<h2 id="s7">7. Ortak Hatim'de grup adları, alınan cüzler ve bildirimler</h2>
+<p>Bugün iPhone'da, Android'de sonra. Firestore ayrıca grubun adını, her üyenin hangi cüzü aldığını ve ne zaman okundu
+işaretlediğini, düzenleyenin anonim kimliğini ve düzenleyenin çıkardığı üyeleri saklar. Bir kişiyi ya da grubu bildirirseniz
+bildirim (sebep, grup, bildirilen üye ve sizin anonim kimliğiniz) gereğini yapabilmemiz için yalnızca bizim okuyabileceğimiz
+bir yerde saklanır.</p>
+
+<h2 id="s8">8. Satın alımlar</h2>
+<p>Bugün iPhone'da, Android'de sonra. İsteğe bağlı “Bir kahve ısmarla”, App Store veya Google Play üzerinden yapılan tek
+seferlik bir satın alımdır; ödemeyi Apple ya da Google yapar ve ödeme bilgilerinizi asla görmeyiz. Uygulama reklamları bir
+ay kaldırmak için satın alma kaydını (hangi ürün ve ne zaman) alır; iPhone'da bunu rastgele bir uygulama kullanıcı kimliğiyle
+RevenueCat adlı bir satın alma hizmeti üzerinden yapar.</p>
+
+<h2 id="s9">9. Yedekleme ve eşitleme</h2>
+<ul>
+  <li><strong>Android:</strong> sistemin yedeklemesi uygulamanın ayarlarını, kayıtlı konumlarını, namaz takibi kayıtlarını ve
+  dilini sistemin şifrelemesiyle kendi Google hesabınıza kopyalayabilir. Biz okuyamayız. Telefonunuzun ayarlarından
+  kapatabilirsiniz.</li>
+  <li><strong>iPhone:</strong> Ayarlar'daki iCloud anahtarı açıksa yer imleri, notlar, okuma istatistikleri, hatim planı,
+  takipler, kendi zikirleriniz ve favoriler kendi iCloud hesabınız üzerinden eşitlenir. Biz okuyamayız.</li>
+</ul>
+
+<h2 id="s10">10. Uygulamanın indirdiği içerik</h2>
+<p>Uygulama namaz vakitlerini, günün kartlarını ve – özelliğin bulunduğu yerde – Kur'an metinlerini, mealleri, tefsirleri,
+tilavetleri ve rehberleri Diyanet, Aladhan, alquran.cloud, quran.com, QuranEnc, HadeethEnc, reminder.dev ve dua-dhikr gibi
+herkese açık hizmetlerden indirir. Bu istekler istenen öğeyi ve dili taşır; sizinle ilgili, her internet isteğinin taşıdığından
+(internet adresiniz ve cihaz türü) fazlasını taşımaz. Başka sitelere giden bağlantılar o siteleri açar; orada onların
+politikaları geçerlidir.</p>
+
+<h2 id="s11">11. Verilerin saklanması ve silinmesi, haklarınız</h2>
+<ul>
+  <li>Ortak Hatim verilerini silinene kadar saklarız: uygulamada cüzlerinizi geri verin ya da gruptan ayrılın; düzenleyen bir
+  üyeyi çıkarabilir veya grubu kapatabilir. İstatistikler ve çökme raporları Google'ın proje için saklama ayarlarının izin
+  verdiği süre kadar tutulur.</li>
+  <li>Hakkınızda ne tuttuğumuzu sormak, düzeltmek ya da hepsini silmek (Ortak Hatim takma adınız, aldığınız cüzler ve anonim
+  kimliğiniz dahil) için <a href="mailto:yagizakdeniz0@gmail.com">yagizakdeniz0@gmail.com</a> adresine yazın. Size
+  uygulanan hukuka göre – örneğin AB'nin GDPR'ı veya Türkiye'nin 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) –
+  işlemeye itiraz edebilir ya da veri koruma kurumunuza şikâyette bulunabilirsiniz.</li>
+  <li>Veriler ülkeniz dışındaki sunucularda işlenebilir (Google, Apple, 2. ve 10. bölümlerdeki hizmetler).</li>
+  <li>Bu sayfada adı geçen hizmetlere yapılan istekler HTTPS kullanır. Hiçbir aktarım ya da saklama yöntemi tamamen
+  güvenli değildir.</li>
+  <li>Kanun gerektirirse verileri açıklayabiliriz.</li>
+</ul>
+
+<h2 id="s12">12. Çocuklar</h2>
+<p>Uygulama 13 yaşından küçük çocuklara yönelik değildir ve onlardan bilerek kişisel veri toplamayız. Elif-Bâ ve kısa
+sureler bölümü reklam göstermez ve satın alma sunmaz. Bir çocuğun bize kişisel veri verdiğini düşünüyorsanız bize yazın,
+sileriz.</p>
+
+<h2 id="s13">13. Değişiklikler ve iletişim</h2>
+<p>Bu politika değiştiğinde yeni metin bu sayfada yeni tarihle yayımlanır; önemli değişiklikler önceden bu sayfada ve
+uygulamanın sürüm notlarında (“Yenilikler”) duyurulur. Sorularınız için:
+<a href="mailto:yagizakdeniz0@gmail.com">yagizakdeniz0@gmail.com</a>.</p>
+</main>
+</body>
+</html>
