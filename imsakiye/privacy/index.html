@@ -23,16 +23,17 @@
 <p class="lang">English · <a href="tr/" hreflang="tr" lang="tr">Türkçe</a></p>
 <h1>Privacy Policy</h1>
 <p class="meta">İmsakiye (named “Prayer Times”, “مواقيت الصلاة”, “Gebetszeiten” … in other languages) for iPhone and iPad
-(App Store, ID 1508874827) and Android (Google Play, com.yagia.islam).<br>Last updated: 19 November 2026</p>
+(App Store, ID 1508874827) and Android (Google Play, com.yagia.islam).<br>Last updated: 28 November 2026</p>
 
 <h2 id="s1">1. Who we are and the short version</h2>
 <p>The app is made by Yağız Akdeniz, an individual developer in Türkiye (“we”). Contact:
 <a href="mailto:yagizakdeniz0@gmail.com">yagizakdeniz0@gmail.com</a>.</p>
 <p>You do not need an account. We do not sell your data. We have no server of our own: what leaves your phone goes to the
 services named below, only to make a feature work, to show ads, or to count use and crashes. Everything else – your settings,
-saved places, notifications and alarms – stays on your device.</p>
-<p>Some features are not yet in the Android app: the shared khatm (Ortak Hatim), the “Buy me a coffee” purchase and the Quran.
-This page already describes them, so that it stays true when they arrive; each section says where a feature exists today.</p>
+saved places, notifications and alarms – stays on your device (and in your own backup, section 9).</p>
+<p>The Android app has the iPhone app's features – the shared khatm (Ortak Hatim), the “Buy me a coffee” purchase and the
+Quran among them – except the widgets, the Apple Watch app and iCloud sync, which are iPhone-only (Android keeps a copy in your own
+Google backup, section 9); where the two differ otherwise, the section says so.</p>
 
 <h2 id="s2">2. Location</h2>
 <p>Location is optional: you can always pick a place by hand, and you can withdraw the permission at any time in your
@@ -51,18 +52,24 @@ phone's settings. If you allow it, the app uses your position to choose the near
   (tiles.openfreemap.org), which receives the map area shown and your internet address.</li>
   <li><strong>When.</strong> On Android only while you use the app (no background location). On iPhone, if you also allow
   “Always”, the app can follow your position while closed so that times and notifications match where you are.</li>
-  <li><strong>Ads</strong> (section 3) may estimate an approximate location from your internet address.</li> </ul> <p>We keep
-  no copy of your position; the last one is stored only on your device. The services above receive it to answer the request;
-  their own policies apply to their servers.</p> <h2 id="s3">3. Device and other identifiers (ads, statistics, Ortak
-  Hatim)</h2> <ul> <li><strong>Ads</strong>: the app shows banner and app-open ads from Google AdMob. AdMob may use the
-  device's advertising ID (on iPhone only if you allow tracking), your internet address, ad views and taps and diagnostic data
-  to show, limit and measure ads and to prevent fraud; Google uses this data under its own policy. In the EEA, the UK and
-  Switzerland the app first shows Google's consent message; your choice is stored on the device and can be changed under
-  Settings → Privacy Options. You can reset or delete the advertising ID in your phone's settings.</li>
+  <li><strong>Ads</strong> (section 3) may estimate an approximate location from your internet address.</li>
+</ul>
+<p>We keep no copy of your position; the last one is stored only on your device. The services above receive it to answer the
+request; their own policies apply to their servers.</p>
+
+<h2 id="s3">3. Device and other identifiers (ads, statistics, Ortak Hatim)</h2>
+<ul>
+  <li><strong>Ads</strong>: the app shows banner and app-open ads from Google AdMob. AdMob may use the device's advertising ID
+  (on iPhone only if you allow tracking) and, if applicable, other identifiers related to signed-in accounts on the device,
+  your internet address, ad views and taps and diagnostic data to show, limit and measure ads and to prevent fraud; Google uses
+  this data under its own policy. In the EEA, the UK and Switzerland the app first
+  shows Google's consent message; your choice is stored on the device and can be changed under Settings → Privacy Options. You
+  can reset or delete the advertising ID in your phone's settings.</li>
   <li><strong>Statistics and crash reports</strong>: Google Firebase gives the app an installation identifier (sections 4 and
   5).</li>
-  <li><strong>Ortak Hatim</strong> (iPhone today, Android later): Firebase Anonymous Authentication gives the app a random user
+  <li><strong>Ortak Hatim</strong>: Firebase Anonymous Authentication gives the app a random user
   identifier with no name, email or password (sections 6 and 7).</li>
+  <li><strong>“Buy me a coffee”</strong>: RevenueCat gives the app a random anonymous app user identifier (section 8).</li>
 </ul>
 
 <h2 id="s4">4. How the app is used (usage statistics)</h2>
@@ -76,41 +83,65 @@ statistics are collected only after the consent step and according to your choic
 version, free memory and similar). We use it only to fix errors.</p>
 
 <h2 id="s6">6. Your nickname in Ortak Hatim</h2>
-<p>iPhone today, Android later. Ortak Hatim is optional. When you start or join a shared khatm, the nickname you type is
+<p>Ortak Hatim is optional. When you start or join a shared khatm, the nickname you type is
 stored in Google Cloud Firestore and shown to everyone who has the group's invite code or link, next to the parts (juz) you
 took.</p>
 
 <h2 id="s7">7. Group titles, juz claims and reports in Ortak Hatim</h2>
-<p>iPhone today, Android later. Firestore also stores the group's title, which juz each member took and when they marked it
-read, the organizer's anonymous identifier, and the members the organizer removed. If you report a person or a group, the
-report (the reason, the group, the reported member and your anonymous identifier) is stored where only we can read it, so
-that we can act on it.</p>
+<p>Firestore also stores the group's title and when it was started, the organizer's nickname and
+anonymous identifier, whether the group is closed, and the anonymous identifiers of the members the organizer removed. For each
+juz taken it stores the member's nickname and anonymous identifier, when the juz was taken and when it was marked read. Everyone
+who has the group's invite code or link can read the group and its juz, with these nicknames, identifiers and times. If you
+report a person or a group, the report (the reason, the group, the reported member and your anonymous identifier) is stored
+where only we can read it, so that we can act on it.</p>
 
 <h2 id="s8">8. Purchases</h2>
-<p>iPhone today, Android later. The optional “Buy me a coffee” is a one-time purchase through the App Store or Google Play;
-Apple or Google handles the payment and we never see payment details. The app receives the purchase record (which product and
-when) to remove the ads for a month; on iPhone through RevenueCat, a purchase service, under a random app user identifier.</p>
+<p>The optional “Buy me a coffee” removes the ads for a month. Apple or Google handles the payment and we never see payment
+details. Both apps go through RevenueCat, a purchase service, under a random anonymous app user identifier that RevenueCat
+makes (no name, no email): from the app's start the app asks RevenueCat, with that identifier, whether a coffee was bought –
+also if you never bought one – and RevenueCat receives the purchase record (which product and when).</p>
+<ul>
+  <li><strong>iPhone:</strong> a one-time purchase through the App Store.</li>
+  <li><strong>Android:</strong> a Google Play subscription with a single prepaid plan of one month, which does not renew by
+  itself. RevenueCat keeps its identifier in its own storage inside the app, which the app's backup (section 9) does not copy;
+  once a coffee has been bought under that identifier, RevenueCat also stores it in Google Play services' Block Store, which may
+  back it up to your Google account, so that a reinstall or a new phone is known as the same buyer.</li>
+</ul>
 
 <h2 id="s9">9. Backup and sync</h2>
 <ul>
-  <li><strong>Android:</strong> the system's backup can copy the app's settings, saved places, prayer-tracker logs and language
-  to your own Google account, encrypted by the system. We cannot read it. You can turn it off in the phone's settings.</li>
+  <li><strong>Android:</strong> the system's backup can copy to your own Google account, encrypted by the system: the app's
+  settings, saved places and language; the prayer tracker's logs and the missed-prayer counts (Kaza Takibi); the Quran's
+  bookmarks, notes, reading lists, searches and reading log, and where you read and listened last; the favourites of Discover
+  (Keşfet); the children's area's progress and settings; the looks chosen for the share cards; the date of your last coffee; and
+  Ortak Hatim's group list, your nickname and the anonymous account (its identifier and sign-in token), so that a restored phone
+  stays the same member. We cannot read it. You can turn it off in the phone's settings.</li>
   <li><strong>iPhone:</strong> if the iCloud switch in Settings is on, bookmarks, notes, reading statistics, the khatm plan,
   trackers, your own dhikrs and favourites are synced through your own iCloud account. We cannot read it.</li>
 </ul>
 
 <h2 id="s10">10. Content the app downloads</h2>
-<p>The app downloads prayer times, the cards of the day and – where the feature exists – Quran texts, translations, tafsir,
-recitations and guides from public services such as Diyanet, Aladhan, alquran.cloud, quran.com, QuranEnc, HadeethEnc,
-reminder.dev and dua-dhikr. These requests carry the item and the language asked for, nothing about you beyond what every
-internet request carries (your internet address and the device type). Links to other websites open those sites; their
-policies apply there.</p>
+<p>The app downloads prayer times, the cards of the day, Quran texts, translations, tafsir, recitations and guides from public
+services such as Diyanet, Aladhan, alquran.cloud, quran.com, QuranEnc, HadeethEnc, reminder.dev and dua-dhikr. These requests
+carry the item and the language asked for, nothing about you beyond what every internet request carries (your internet address
+and the device type).</p>
+<p>Links to other websites – a source's page, a fatwa, a book – open in the app's own browser. It loads the pages you open, and
+those sites receive what every visit to them sends (your internet address, the device type and the languages the browser asks
+for); the app adds nothing of its own – no identifier and nothing about you. Their policies apply there. “Open in Browser”
+hands a page to your phone's browser.</p>
 
 <h2 id="s11">11. Keeping and deleting data, your rights</h2>
 <ul>
-  <li>We keep Ortak Hatim data until it is deleted: give back your juz or leave a group in the app; an organizer can remove a
-  member or close the group. Statistics and crash reports are kept as long as Google's retention settings for the project
-  allow.</li>
+  <li>We keep Ortak Hatim data until it is deleted. While a group is running (not closed and not finished), you can give back a
+  juz you took in the app: its entry, with your nickname and identifier, is deleted – also after you marked it read. Leaving a
+  group gives back only the juz you have not read; the ones you marked read stay in the group with your nickname and anonymous
+  identifier, so that the group's progress stays. An organizer can remove a member: that member's juz are deleted, and the
+  member's anonymous identifier stays in the group's list of removed members, so that they cannot join again. Closing a group
+  stops new juz being taken; it deletes nothing: its title, the organizer's nickname and identifier and every juz entry stay.
+  “Remove from My List” forgets a group on your phone only. Groups and reports cannot be deleted from the app at all. Whatever
+  stays – your nickname and identifier in the juz you read, your identifier in a group's list of removed members or in a report
+  (a report holds identifiers, no nickname), or a whole group you organize – we delete by hand when you write to us (next
+  point). Statistics and crash reports are kept as long as Google's retention settings for the project allow.</li>
   <li>Write to <a href="mailto:yagizakdeniz0@gmail.com">yagizakdeniz0@gmail.com</a> to ask what we hold about you,
   to correct it, or to delete all of it (your Ortak Hatim nickname, claims and anonymous identifier included). Under the law
   that applies to you – for example the EU's GDPR or Türkiye's personal data protection law (KVKK, No. 6698) – you may also
@@ -122,9 +153,17 @@ policies apply there.</p>
 </ul>
 
 <h2 id="s12">12. Children</h2>
-<p>The app is not directed at children under 13, and we do not knowingly collect personal data from them. The section for
-learning the Arabic letters and short surahs shows no ads and offers no purchases. If you believe a child has given us
-personal data, write to us and we will delete it.</p>
+<p>The app is not directed at children under 13, and we do not knowingly collect personal data from them. The children's area
+(the Arabic letters, short surahs, games and badges) shows no ads of the app's own and offers no purchases; its progress stays
+on your phone (and in your own backup, section 9). On the web, the children's pages open only Diyanet's pages for children – the
+alphabet course on kuran.diyanet.gov.tr, in which the app sets only the course's language and lesson in that page's own storage, and the
+children's page of namaz.diyanet.gov.tr – and Diyanet Çocuk's videos, which play in YouTube's own embedded player
+(youtube-nocookie.com): Google receives those requests, the video asked for and your internet address under its own policy.
+Before an embedded part of such a page loads, the app follows its address once itself, without cookies, to check that it stays
+on these sites. The parent area behind its question opens its sources (tanzil.net, alquran.cloud, GitHub, kuran.diyanet.gov.tr,
+egitimhizmetleri.diyanet.gov.tr, namaz.diyanet.gov.tr and youtube.com) in the app's own browser, as section 10 describes. The
+children's recitations are downloaded from the Islamic Network's server (cdn.islamic.network). If you
+believe a child has given us personal data, write to us and we will delete it.</p>
 
 <h2 id="s13">13. Changes and contact</h2>
 <p>When this policy changes, the new text is published on this page with a new date; important changes are announced
